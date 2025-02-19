@@ -1,4 +1,6 @@
 .DS_Store
 
+.GDOT_explorer.ipynb
+
 .github/workflows/*.log
 .github/workflows/*.cache
