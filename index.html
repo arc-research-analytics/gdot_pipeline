@@ -1,31 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="utf-8" />
     <title>GDOT Projects Map</title>
-    <link rel="stylesheet" href="style.css" />
-    <script defer type="module" src="script.js"></script>
-    <link
-      href="https://api.mapbox.com/mapbox-gl-js/v2.16.0/mapbox-gl.css"
-      rel="stylesheet"
+    <meta
+      name="viewport"
+      content="initial-scale=1,maximum-scale=1,user-scalable=no"
     />
+    <link
+      rel="stylesheet"
+      href="https://api.mapbox.com/mapbox-gl-js/v3.10.0/mapbox-gl.css"
+    />
+    <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <div id="map"></div>
-    <div id="table-container">
-      <table id="projects-table">
-        <thead>
-          <tr>
-            <th>Project Name</th>
-            <th>County</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Populated dynamically -->
-        </tbody>
-      </table>
-    </div>
+
+    <!-- <div class="map-overlay">
+      <fieldset>
+        <input
+          id="feature-filter"
+          type="text"
+          placeholder="Filter projects by description"
+        />
+      </fieldset>
+      <div id="feature-listing" class="listing"></div>
+    </div> -->
+
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.10.0/mapbox-gl.js"></script>
+    <script src="script.js"></script>
   </body>
 </html>

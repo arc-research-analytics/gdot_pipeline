@@ -1,49 +1,30 @@
-// import, set API key
 mapboxgl.accessToken = "MAPBOX_API_KEY_PLACEHOLDER";
-
 const map = new mapboxgl.Map({
   container: "map",
-  style: "mapbox://styles/mapbox/streets-v11",
-  center: [-84.39, 33.75],
-  zoom: 10,
+  style: "mapbox://styles/mapbox/streets-v12",
+  center: [-84.388, 33.749], // Center the map around Atlanta, GA
+  zoom: 6,
 });
 
-// Load and display projects
-fetch("data/projects.geojson")
-  .then((response) => response.json())
-  .then((data) => {
-    map.on("load", () => {
-      map.addSource("projects", {
-        type: "geojson",
-        data: data,
-      });
-
-      map.addLayer({
-        id: "projects-layer",
-        type: "circle",
-        source: "projects",
-        paint: {
-          "circle-radius": 6,
-          "circle-color": "#007cbf",
-        },
-      });
-
-      populateTable(data.features);
-    });
-  })
-  .catch((error) => console.error("Error loading data:", error));
-
-// Populate table
-function populateTable(features) {
-  const tbody = document
-    .getElementById("projects-table")
-    .getElementsByTagName("tbody")[0];
-  tbody.innerHTML = ""; // Clear table first
-
-  features.forEach((feature) => {
-    const row = tbody.insertRow();
-    row.insertCell(0).innerText = feature.properties.SHORT_DESC || "N/A";
-    row.insertCell(1).innerText = feature.properties.COUNTY || "N/A";
-    row.insertCell(2).innerText = feature.properties.REC_STATUS || "N/A";
+map.on("load", () => {
+  // Load the GeoJSON data
+  map.addSource("gdot-projects", {
+    type: "geojson",
+    data: "data/GDOT_export.geojson", // Path to your GeoJSON file
   });
-}
+
+  // Add a layer to visualize the GDOT project geometries
+  map.addLayer({
+    id: "gdot-projects-layer",
+    type: "line", // Use 'line' for polylines and multi-lines
+    source: "gdot-projects",
+    layout: {
+      "line-join": "round",
+      "line-cap": "round",
+    },
+    paint: {
+      "line-color": "#FF0000", // Set the color of the lines
+      "line-width": 4, // Set the width of the lines
+    },
+  });
+});
