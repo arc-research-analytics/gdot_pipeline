@@ -1,0 +1,26 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main # Change this if your default branch is different
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Replace API key placeholder
+        run: |
+          sed -i "s/MAPBOX_API_KEY_PLACEHOLDER/${{ secrets.MAPBOX_API_KEY }}/g" script.js
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages
+          folder: . # Deploy everything in the repo root
