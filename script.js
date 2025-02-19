@@ -1,30 +1,29 @@
+// swap out with pk.eyJ1Ijoid3dyaWdodDIxIiwiYSI6ImNtN2MwdjdtYjBqeTUycnBwbHI1cWJrZmIifQ.BztD8jx6SLKxOtjK1ae4kg before deployment
 mapboxgl.accessToken = "pk.eyJ1Ijoid3dyaWdodDIxIiwiYSI6ImNtN2MwdjdtYjBqeTUycnBwbHI1cWJrZmIifQ.BztD8jx6SLKxOtjK1ae4kg";
+
 const map = new mapboxgl.Map({
-  container: "map",
-  style: "mapbox://styles/mapbox/streets-v12",
-  center: [-84.388, 33.749], // Center the map around Atlanta, GA
+  container: "map", // container ID
+  style: "mapbox://styles/mapbox/dark-v11", // style URL
+  center: [-84.38, 33.76], // starting position [lng, lat]
   zoom: 6,
+  crossOrigin: "anonymous",
 });
 
-map.on("load", () => {
-  // Load the GeoJSON data
-  map.addSource("gdot-projects", {
-    type: "geojson",
-    data: "data/GDOT_export.geojson", // Path to your GeoJSON file
+// Load the GeoJSON file
+fetch("data/GDOT_export.geojson")
+  .then((response) => response.json())
+  .then((data) => {
+    // Add the GeoJSON layer to the map
+    map.addLayer({
+      id: "data-layer",
+      type: "line",
+      source: {
+        type: "geojson",
+        data: data,
+      },
+      paint: {
+        "line-color": "#FFFFFF",
+        "line-width": 2,
+      },
+    });
   });
-
-  // Add a layer to visualize the GDOT project geometries
-  map.addLayer({
-    id: "gdot-projects-layer",
-    type: "line", // Use 'line' for polylines and multi-lines
-    source: "gdot-projects",
-    layout: {
-      "line-join": "round",
-      "line-cap": "round",
-    },
-    paint: {
-      "line-color": "#FF0000", // Set the color of the lines
-      "line-width": 4, // Set the width of the lines
-    },
-  });
-});

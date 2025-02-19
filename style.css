@@ -1,48 +1,10 @@
 body {
     margin: 0;
     padding: 0;
-}
-
-#map {
+  }
+  #map {
     position: absolute;
     top: 0;
     bottom: 0;
     width: 100%;
-}
-
-.map-overlay {
-    position: absolute;
-    width: 25%;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    background-color: #efefef;
-    font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
-    overflow: hidden;
-    padding: 10px;
-}
-
-.map-overlay input {
-    width: 100%;
-    padding: 10px;
-    border: none;
-    border-radius: 3px;
-    box-sizing: border-box;
-}
-
-.map-overlay .listing {
-    overflow-y: auto;
-    max-height: calc(100% - 50px);
-}
-
-.map-overlay .listing a {
-    display: block;
-    padding: 5px 10px;
-    text-decoration: none;
-    color: #404;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-.map-overlay .listing a:hover {
-    background: #f0f0f0;
-}
+  }
