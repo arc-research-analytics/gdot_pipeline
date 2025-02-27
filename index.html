@@ -14,9 +14,24 @@
     <script src="https://api.mapbox.com/mapbox-gl-js/v3.10.0/mapbox-gl.js"></script>
     <link rel="stylesheet" href="style.css"></style>
 
+    <!-- geocoder -->
+    <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.3/mapbox-gl-geocoder.min.js"></script>
+    <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.3/mapbox-gl-geocoder.css" type="text/css">
+
+    <!-- google font -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
   </head>
   <body>
     <div id="map"></div>
+    <div id="map-title">Metro Atlanta GDOT Projects <br>(Pre-Construction Only)</div>
+    <div id="last-updated"></div>
+    <div class="map-overlay">
+      <fieldset>
+          <input id="feature-filter" type="text" placeholder="Search to filter projects:">
+      </fieldset>
+      <div id="feature-listing" class="listing"></div>
+  </div>
     
     <!-- Reference the external JavaScript file -->
     <script src="script.js"></script>
