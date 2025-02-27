@@ -1,6 +1,5 @@
 // swap out with MAPBOX_API_KEY_PLACEHOLDER before deployment
-mapboxgl.accessToken =
-  "pk.eyJ1Ijoid3dyaWdodDIxIiwiYSI6ImNtN2MwdjdtYjBqeTUycnBwbHI1cWJrZmIifQ.BztD8jx6SLKxOtjK1ae4kg";
+mapboxgl.accessToken = "MAPBOX_API_KEY_PLACEHOLDER";
 
 // instantiate map
 const map = new mapboxgl.Map({
