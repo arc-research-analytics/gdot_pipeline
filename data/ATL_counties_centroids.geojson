@@ -1,0 +1,32 @@
+{
+"type": "FeatureCollection",
+"name": "ATL_counties_centroids",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "NAME": "Fayette" }, "geometry": { "type": "Point", "coordinates": [ -84.494195397517117, 33.413949288671084 ] } },
+{ "type": "Feature", "properties": { "NAME": "Carroll" }, "geometry": { "type": "Point", "coordinates": [ -85.079748437740534, 33.582823268343311 ] } },
+{ "type": "Feature", "properties": { "NAME": "Rockdale" }, "geometry": { "type": "Point", "coordinates": [ -84.026612941010768, 33.65424159215253 ] } },
+{ "type": "Feature", "properties": { "NAME": "Cobb" }, "geometry": { "type": "Point", "coordinates": [ -84.576677412263081, 33.941478029171421 ] } },
+{ "type": "Feature", "properties": { "NAME": "Forsyth" }, "geometry": { "type": "Point", "coordinates": [ -84.125023342939045, 34.225521757985746 ] } },
+{ "type": "Feature", "properties": { "NAME": "Clayton" }, "geometry": { "type": "Point", "coordinates": [ -84.357689666321946, 33.541891685992326 ] } },
+{ "type": "Feature", "properties": { "NAME": "Henry" }, "geometry": { "type": "Point", "coordinates": [ -84.154201600315773, 33.45300924528587 ] } },
+{ "type": "Feature", "properties": { "NAME": "Dawson" }, "geometry": { "type": "Point", "coordinates": [ -84.170641714906935, 34.444306012958471 ] } },
+{ "type": "Feature", "properties": { "NAME": "Bartow" }, "geometry": { "type": "Point", "coordinates": [ -84.840501464790904, 34.237862674320851 ] } },
+{ "type": "Feature", "properties": { "NAME": "Newton" }, "geometry": { "type": "Point", "coordinates": [ -83.850190374308099, 33.555056153830847 ] } },
+{ "type": "Feature", "properties": { "NAME": "Gwinnett" }, "geometry": { "type": "Point", "coordinates": [ -84.023633240995579, 33.961735215647067 ] } },
+{ "type": "Feature", "properties": { "NAME": "Fulton" }, "geometry": { "type": "Point", "coordinates": [ -84.412099659892945, 33.746899161802283 ] } },
+{ "type": "Feature", "properties": { "NAME": "Pickens" }, "geometry": { "type": "Point", "coordinates": [ -84.465641882919115, 34.464326875386348 ] } },
+{ "type": "Feature", "properties": { "NAME": "Hall" }, "geometry": { "type": "Point", "coordinates": [ -83.819685225220852, 34.316896352911584 ] } },
+{ "type": "Feature", "properties": { "NAME": "Spalding" }, "geometry": { "type": "Point", "coordinates": [ -84.28416477312814, 33.260875302019322 ] } },
+{ "type": "Feature", "properties": { "NAME": "Douglas" }, "geometry": { "type": "Point", "coordinates": [ -84.76793080793415, 33.701824932667826 ] } },
+{ "type": "Feature", "properties": { "NAME": "Coweta" }, "geometry": { "type": "Point", "coordinates": [ -84.763370934814802, 33.353463696320929 ] } },
+{ "type": "Feature", "properties": { "NAME": "Butts" }, "geometry": { "type": "Point", "coordinates": [ -83.957173739390072, 33.287857850442997 ] } },
+{ "type": "Feature", "properties": { "NAME": "DeKalb" }, "geometry": { "type": "Point", "coordinates": [ -84.226412463639676, 33.771535384668901 ] } },
+{ "type": "Feature", "properties": { "NAME": "Cherokee" }, "geometry": { "type": "Point", "coordinates": [ -84.47620270601287, 34.24394026605259 ] } },
+{ "type": "Feature", "properties": { "NAME": "Walton" }, "geometry": { "type": "Point", "coordinates": [ -83.733850245170018, 33.781564090628386 ] } },
+{ "type": "Feature", "properties": { "NAME": "Barrow" }, "geometry": { "type": "Point", "coordinates": [ -83.712768263443493, 33.993202602746074 ] } },
+{ "type": "Feature", "properties": { "NAME": "Paulding" }, "geometry": { "type": "Point", "coordinates": [ -84.867292426467969, 33.920549321280539 ] } },
+{ "type": "Feature", "properties": { "NAME": "Gordon" }, "geometry": { "type": "Point", "coordinates": [ -84.875759933553397, 34.503366145599848 ] } },
+{ "type": "Feature", "properties": { "NAME": "Jackson" }, "geometry": { "type": "Point", "coordinates": [ -83.566352797793158, 34.133887840879872 ] } }
+]
+}
