@@ -26,6 +26,11 @@ let projectInfo = [];
 fetch("data/GDOT_export.geojson")
   .then((response) => response.json())
   .then((data) => {
+    // Add unique IDs to features
+    data.features.forEach((feature, index) => {
+      feature.properties.internalId = index; // Add internalId
+    });
+
     // Add the GeoJSON layer to the map
     map.addLayer({
       id: "pc-projects",
@@ -49,30 +54,34 @@ fetch("data/GDOT_export.geojson")
     // Mouse move event to change color on hover
     map.on("mousemove", "pc-projects", (e) => {
       if (e.features.length > 0) {
-        if (hoveredProjectId !== null) {
-          console.log("Resetting hover state for", hoveredProjectId);
+        const feature = e.features[0];
+        const featureId = feature.properties.feature_id;
+        const featureIndex = feature.properties.internalId; // Use internalId
+        console.log("hovering over: ", featureId, " index: ", featureIndex);
+
+        if (hoveredFeatureId !== null && hoveredFeatureId !== featureIndex) {
           map.setFeatureState(
-            { source: "pc-projects", id: hoveredProjectId },
+            { source: "pc-projects", id: hoveredFeatureId },
             { hover: false }
           );
         }
-        hoveredProjectId = e.features[0].properties.feature_id;
+        hoveredFeatureId = featureIndex;
         map.setFeatureState(
-          { source: "pc-projects", id: hoveredProjectId },
+          { source: "pc-projects", id: hoveredFeatureId },
           { hover: true }
         );
       }
-    });
 
-    // Mouse leave event to reset color
-    map.on("mouseleave", "pc-projects", () => {
-      if (hoveredProjectId !== null) {
-        map.setFeatureState(
-          { source: "pc-projects", id: hoveredProjectId },
-          { hover: false }
-        );
-      }
-      hoveredProjectId = null;
+      // Mouse leave event to reset color
+      map.on("mouseleave", "pc-projects", () => {
+        if (hoveredFeatureId !== null) {
+          map.setFeatureState(
+            { source: "pc-projects", id: hoveredFeatureId },
+            { hover: false }
+          );
+        }
+        hoveredFeatureId = null;
+      });
     });
 
     // create an array of project info
