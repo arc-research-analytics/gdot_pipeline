@@ -4,6 +4,31 @@ body {
     font-family: 'Roboto', sans-serif;
   }
 
+header {
+    background-color: #0096FF;  /* Off-white */
+    color: #fff;  /* Dark gray text */
+    text-align: left;
+    padding: 10px;
+    font-size: 25px;
+    font-weight: bold;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    opacity: .9;
+}
+
+.header-logo {
+  position: absolute;
+  top: 50%;  /* Centers vertically */
+  right: 30px;  /* Moves image to the right */
+  transform: translateY(-50%);  /* Ensures perfect vertical centering */
+  height: 45px;  /* Adjust as needed */
+  width: auto;  /* Maintains aspect ratio */
+}
+
+
 #map {
 position: absolute;
 top: 0;
@@ -20,36 +45,21 @@ width: 100%;
 /* place the geocoder at the top left of the screen */
 .mapboxgl-ctrl-geocoder {
   width: 300px!important;
-  margin-top: 20px!important;
+  margin-top: 70px!important;
   margin-right: 20px!important;
   opacity: var(--opacity-value);
 } 
 
-#map-title {
-  position: absolute;
-  z-index: 1;
-  top: var(--topline-margin);
-  left: 16px;
-  font-size: 25px;
-  font-weight: 500;
-  color: #fff;
-  padding: 5px 10px;
-  border-radius: 5px;
-  background-color: #0096FF;
-  opacity: var(--opacity-value);
-}
-
 .map-overlay {
   position: absolute;
   width: 380px;
-  top: 120px;
+  top: 75px;
   bottom: 90px;
   left: 15px;
   background-color: #efefef;
   opacity: var(--opacity-value);
   max-height: 100%;
   overflow: hidden;
-  /* box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);  */
   border-radius: 10px;
 }
 
@@ -110,4 +120,12 @@ width: 100%;
   right: 20px;
   color:darkgrey;
   top: 15px;
+}
+
+@media screen and (max-width: 768px) {
+  .map-overlay,
+  .header-logo,
+  .mapboxgl-ctrl-geocoder {
+      display: none !important;  /* Hides elements on smaller screens */
+  }
 }
