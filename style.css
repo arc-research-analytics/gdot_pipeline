@@ -15,17 +15,40 @@ header {
     width: 100%;
     top: 0;
     left: 0;
-    z-index: 1000;
+    z-index: 2;
     opacity: .9;
 }
 
-.header-logo {
+.arc-logo {
   position: absolute;
-  top: 50%;  /* Centers vertically */
-  right: 25px;  /* Moves image to the right */
+  right: 10px;  
+  bottom: 10px;
   transform: translateY(-50%);  /* Ensures perfect vertical centering */
   height: 45px;  /* Adjust as needed */
   width: auto;  /* Maintains aspect ratio */
+  z-index: 2;
+}
+
+.gdot-logo {
+  position: absolute;
+  right: 140px;  
+  bottom: 12px;
+  transform: translateY(-50%);  /* Ensures perfect vertical centering */
+  height: 45px;  /* Adjust as needed */
+  width: auto;  /* Maintains aspect ratio */
+  z-index: 2;
+}
+
+#geocoder-container {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  z-index: 99!important;
+}
+
+#geocoder-container .mapboxgl-ctrl-geocoder input {
+  outline: none !important;
+  box-shadow: none !important;
 }
 
 
@@ -45,9 +68,10 @@ width: 100%;
 /* place the geocoder at the top left of the screen */
 .mapboxgl-ctrl-geocoder {
   width: 300px!important;
-  margin-top: 70px!important;
+  margin-top: 6px!important;
   margin-right: 20px!important;
   opacity: var(--opacity-value);
+  z-index: 999!important;
 } 
 
 .map-overlay {

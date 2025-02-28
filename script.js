@@ -328,7 +328,7 @@ const geocoder = new MapboxGeocoder({
   accessToken: mapboxgl.accessToken,
   mapboxgl: mapboxgl,
   marker: false, // disable the default marker
-  placeholder: "Search address:",
+  placeholder: "Search for an address:",
   bbox: [-85.046, 33.025, -83.143, 34.982],
   limit: 3,
 });
@@ -367,8 +367,14 @@ geocoder.on("clear", () => {
   map.removeLayer("custom-marker");
 });
 
-// add the geocoder to the map
-map.addControl(geocoder);
+// get the geocoder container element
+const geocoderContainer = geocoder.onAdd(map);
+
+// append the geocoder container to a separate <div> element
+document.getElementById("geocoder-container").appendChild(geocoderContainer);
+
+// // add the geocoder to the map
+// map.addControl(geocoder);
 
 // load the Counties
 fetch("data/ATL_counties.geojson")
@@ -438,8 +444,8 @@ fetch("data/current_date.txt")
     document.getElementById("last-updated").textContent = lastUpdatedText;
     document.getElementById("last-updated").style.zIndex = 1;
     document.getElementById("last-updated").style.position = "absolute";
-    document.getElementById("last-updated").style.bottom = "28px";
-    document.getElementById("last-updated").style.right = "10px";
+    document.getElementById("last-updated").style.bottom = "8px";
+    document.getElementById("last-updated").style.left = "100px";
     document.getElementById("last-updated").style.fontSize = "15px";
     document.getElementById("last-updated").style.color = "#fff";
     document.getElementById("last-updated").style.opacity = 0.6;
