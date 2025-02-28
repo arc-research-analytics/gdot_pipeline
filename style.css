@@ -22,7 +22,7 @@ header {
 .header-logo {
   position: absolute;
   top: 50%;  /* Centers vertically */
-  right: 30px;  /* Moves image to the right */
+  right: 25px;  /* Moves image to the right */
   transform: translateY(-50%);  /* Ensures perfect vertical centering */
   height: 45px;  /* Adjust as needed */
   width: auto;  /* Maintains aspect ratio */

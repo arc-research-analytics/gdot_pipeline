@@ -185,6 +185,22 @@ fetch("data/GDOT_export.geojson")
     });
   });
 
+// Mouse click event to link to project URL
+map.on("click", "pc-projects", (e) => {
+  if (e.features.length > 0) {
+    // Get the clicked feature's properties
+    const clickedFeature = e.features[0].properties;
+
+    // Redirect to the project's URL
+    const projectUrl = clickedFeature.Project_URL; // Assuming 'Project_URL' is the correct property
+    if (projectUrl) {
+      window.open(projectUrl, "_blank"); // Navigate to the project URL
+    } else {
+      console.log("No URL available for this project.");
+    }
+  }
+});
+
 // Add event listener to the map to filter table
 map.on("moveend", () => {
   if (projectInfo.length === 0) {
