@@ -18,17 +18,16 @@ const scale = new mapboxgl.ScaleControl({
 });
 map.addControl(scale);
 
-let hoveredFeatureId = null;
-let hoveredProjectId = null;
 let projectInfo = [];
+let hoveredProjectId = null;
 
 // Load the projects, create the filter and table
 fetch("data/GDOT_export.geojson")
   .then((response) => response.json())
   .then((data) => {
-    // Add unique IDs to features
-    data.features.forEach((feature, index) => {
-      feature.properties.internalId = index; // Add internalId
+    map.addSource("projects-source", {
+      type: "geojson",
+      data: data,
     });
 
     // Add the GeoJSON layer to the map
@@ -43,45 +42,12 @@ fetch("data/GDOT_export.geojson")
         "line-color": [
           "case",
           ["boolean", ["feature-state", "hover"], false],
-          "#FF0000", // Change to red on hover
-          "#0096FF", // Default color
+          "#FF0000", // color on hover
+          "#0096FF", // default color
         ],
         "line-width": 8,
         "line-opacity": 0.8,
       },
-    });
-
-    // Mouse move event to change color on hover
-    map.on("mousemove", "pc-projects", (e) => {
-      if (e.features.length > 0) {
-        const feature = e.features[0];
-        const featureId = feature.properties.feature_id;
-        const featureIndex = feature.properties.internalId; // Use internalId
-        console.log("hovering over: ", featureId, " index: ", featureIndex);
-
-        if (hoveredFeatureId !== null && hoveredFeatureId !== featureIndex) {
-          map.setFeatureState(
-            { source: "pc-projects", id: hoveredFeatureId },
-            { hover: false }
-          );
-        }
-        hoveredFeatureId = featureIndex;
-        map.setFeatureState(
-          { source: "pc-projects", id: hoveredFeatureId },
-          { hover: true }
-        );
-      }
-
-      // Mouse leave event to reset color
-      map.on("mouseleave", "pc-projects", () => {
-        if (hoveredFeatureId !== null) {
-          map.setFeatureState(
-            { source: "pc-projects", id: hoveredFeatureId },
-            { hover: false }
-          );
-        }
-        hoveredFeatureId = null;
-      });
     });
 
     // create an array of project info
@@ -292,20 +258,21 @@ map.on("mousemove", "pc-projects", (e) => {
     )
     .addTo(map);
 
-  // Reset the previously hovered feature
-  if (hoveredFeatureId !== null) {
+  if (e.features.length > 0) {
+    // Reset the previously hovered feature
+    if (hoveredProjectId !== null) {
+      map.setFeatureState(
+        { source: "projects-source", id: hoveredProjectId },
+        { hover: false }
+      );
+    }
+
+    hoveredProjectId = feature.properties.feature_id;
     map.setFeatureState(
-      { source: "pc-projects", id: hoveredFeatureId },
-      { hover: false }
+      { source: "projects-source", id: hoveredProjectId },
+      { hover: true }
     );
   }
-
-  // Set new hovered feature
-  hoveredFeatureId = feature.properties.feature_id;
-  map.setFeatureState(
-    { source: "pc-projects", id: hoveredFeatureId },
-    { hover: true }
-  );
 });
 
 // remove the tooltip when not hovering
@@ -314,12 +281,12 @@ map.on("mouseleave", "pc-projects", () => {
   popup.remove();
 
   // Reset the hover state when the mouse leaves
-  if (hoveredFeatureId !== null) {
+  if (hoveredProjectId !== null) {
     map.setFeatureState(
-      { source: "pc-projects", id: hoveredFeatureId },
+      { source: "projects-source", id: hoveredProjectId },
       { hover: false }
     );
-    hoveredFeatureId = null;
+    hoveredProjectId = null;
   }
 });
 
@@ -372,9 +339,6 @@ const geocoderContainer = geocoder.onAdd(map);
 
 // append the geocoder container to a separate <div> element
 document.getElementById("geocoder-container").appendChild(geocoderContainer);
-
-// // add the geocoder to the map
-// map.addControl(geocoder);
 
 // load the Counties
 fetch("data/ATL_counties.geojson")
