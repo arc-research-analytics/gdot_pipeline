@@ -41,8 +41,8 @@ header {
 
 #geocoder-container {
   position: absolute;
-  top: 0px;
-  right: 0px;
+  top: 0.5px;
+  right: -14px!important;
   z-index: 99!important;
 }
 
