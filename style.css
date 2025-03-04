@@ -182,7 +182,7 @@ width: 100%;
   sl-button.openDrawer {
     bottom: auto; /* Reset bottom positioning */
     top: 70px;
-    right: 28px;
+    right: 25px;
   }
 
   /* remove the following elements on mobile */
