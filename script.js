@@ -334,8 +334,8 @@ geocoder.on("result", (result) => {
     type: "symbol",
     source: "custom-marker",
     layout: {
-      "icon-image": "custom-marker",
-      "icon-size": 0.5,
+      "icon-image": "marker-15", // Built-in Mapbox teardrop pin
+      "icon-size": 1.5,
       "icon-anchor": "bottom",
     },
   });
