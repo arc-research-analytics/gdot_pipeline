@@ -181,8 +181,8 @@ width: 100%;
   /* reposition Filter button */
   sl-button.openDrawer {
     bottom: auto; /* Reset bottom positioning */
-    top: 50px;
-    right: 30px;
+    top: 70px;
+    right: 28px;
   }
 
   /* remove the following elements on mobile */
