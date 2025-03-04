@@ -310,8 +310,7 @@ const geocoder = new MapboxGeocoder({
 geocoder.on("result", (result) => {
   const coordinates = result.result.geometry.coordinates;
 
-  // add the marker source
-  map.addSource("custom-marker", {
+  map.addSource("marker", {
     type: "geojson",
     data: {
       type: "FeatureCollection",
@@ -328,15 +327,14 @@ geocoder.on("result", (result) => {
     },
   });
 
-  // add a symbol layer using the custom marker
+  // add a symbol layer using
   map.addLayer({
     id: "custom-marker",
-    type: "symbol",
-    source: "custom-marker",
-    layout: {
-      "icon-image": "marker-15", // Built-in Mapbox teardrop pin
-      "icon-size": 1.5,
-      "icon-anchor": "bottom",
+    type: "circle",
+    source: "marker",
+    paint: {
+      "circle-color": "#ff0000", // red color
+      "circle-radius": 10,
     },
   });
 });
