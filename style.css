@@ -179,7 +179,8 @@ width: 100%;
 @media screen and (max-width: 768px) {
   .map-overlay,
   .header-logo,
-  .mapboxgl-ctrl-geocoder {
+  .mapboxgl-ctrl-geocoder,
+  .gdot-logo {
       display: none !important;  /* Hides elements on smaller screens */
   }
 }
