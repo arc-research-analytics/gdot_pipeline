@@ -309,28 +309,34 @@ const geocoder = new MapboxGeocoder({
 // this will add a red dot to the map at the location of the results
 geocoder.on("result", (result) => {
   const coordinates = result.result.geometry.coordinates;
+
+  // add the marker source
+  map.addSource("custom-marker", {
+    type: "geojson",
+    data: {
+      type: "FeatureCollection",
+      features: [
+        {
+          type: "Feature",
+          geometry: {
+            type: "Point",
+            coordinates: coordinates,
+          },
+          properties: {},
+        },
+      ],
+    },
+  });
+
+  // add a symbol layer using the custom marker
   map.addLayer({
     id: "custom-marker",
-    type: "circle",
-    source: {
-      type: "geojson",
-      data: {
-        type: "FeatureCollection",
-        features: [
-          {
-            type: "Feature",
-            geometry: {
-              type: "Point",
-              coordinates: coordinates,
-            },
-            properties: {},
-          },
-        ],
-      },
-    },
-    paint: {
-      "circle-color": "#ff0000", // red color
-      "circle-radius": 10,
+    type: "symbol",
+    source: "custom-marker",
+    layout: {
+      "icon-image": "custom-marker",
+      "icon-size": 0.5,
+      "icon-anchor": "bottom",
     },
   });
 });
