@@ -177,6 +177,15 @@ width: 100%;
 }
 
 @media screen and (max-width: 768px) {
+
+  /* reposition Filter button */
+  sl-button.openDrawer {
+    bottom: auto; /* Reset bottom positioning */
+    top: 50px;
+    right: 30px;
+  }
+
+  /* remove the following elements on mobile */
   .map-overlay,
   .header-logo,
   .mapboxgl-ctrl-geocoder,
