@@ -1,6 +1,12 @@
 // swap out with MAPBOX_API_KEY_PLACEHOLDER before deployment
 mapboxgl.accessToken = "MAPBOX_API_KEY_PLACEHOLDER";
 
+// define map bounds
+const bounds = [
+  [-86.96558853882759, 31.87408043011631], // Southwest coordinates
+  [-82.39296462746158, 34.86004636003112], // Northeast coordinates
+];
+
 // instantiate map
 const map = new mapboxgl.Map({
   container: "map", // container ID
@@ -9,6 +15,7 @@ const map = new mapboxgl.Map({
   zoom: 8.5,
   minZoom: 8,
   crossOrigin: "anonymous",
+  maxBounds: bounds,
 });
 
 // add dynamic scale to map
@@ -34,18 +41,21 @@ fetch("data/GDOT_export.geojson")
     map.addLayer({
       id: "pc-projects",
       type: "line",
-      source: {
-        type: "geojson",
-        data: data,
-      },
+      source: "projects-source",
       paint: {
         "line-color": [
           "case",
           ["boolean", ["feature-state", "hover"], false],
-          "#FF0000", // color on hover
-          "#0096FF", // default color
+          "#4db6ff", // color on hover
+          "#0069b3", // default color
         ],
-        "line-width": 8,
+        // "line-width": 8,
+        "line-width": [
+          "case",
+          ["boolean", ["feature-state", "hover"], false],
+          11, // width on hover
+          7, // default width]
+        ],
         "line-opacity": 0.8,
       },
     });
@@ -55,7 +65,7 @@ fetch("data/GDOT_export.geojson")
       return {
         description: feature.properties.Project_description,
         url: feature.properties.Project_URL,
-        featureId: feature.properties.feature_id,
+        featureId: feature.id,
       };
     });
 
@@ -83,17 +93,13 @@ fetch("data/GDOT_export.geojson")
 
       // add event listener for hovering over any part of the listingEl to simply console.log a message
       listingEl.addEventListener("mouseover", (event) => {
-        const featureId = event.target.dataset.featureId;
+        const featureId = Number(event.target.dataset.featureId);
 
-        if (featureId) {
-          console.log("Hovering over feature with featureId:", featureId);
-          const features = map.querySourceFeatures("pc-projects", {
-            filter: ["==", "feature_id", featureId],
-          });
-          const feature = features[0];
-          const coordinates = feature.geometry.coordinates;
+        const feature = data.features.find((f) => f.id === featureId);
+        if (feature) {
+          const coordinates = feature.geometry.coordinates[0];
           popup
-            .setLngLat(coordinates[0])
+            .setLngLat(coordinates)
             .setHTML(
               `<div style="text-align: center;"><span style="font-family: Arial, sans-serif; font-size: 14px;">${feature.properties.Project_description}</span></div>`
             )
@@ -267,7 +273,7 @@ map.on("mousemove", "pc-projects", (e) => {
       );
     }
 
-    hoveredProjectId = feature.properties.feature_id;
+    hoveredProjectId = e.features[0].id;
     map.setFeatureState(
       { source: "projects-source", id: hoveredProjectId },
       { hover: true }
@@ -297,7 +303,7 @@ const geocoder = new MapboxGeocoder({
   marker: false, // disable the default marker
   placeholder: "Search for an address:",
   bbox: [-85.046, 33.025, -83.143, 34.982],
-  limit: 3,
+  limit: 5,
 });
 
 // this will add a red dot to the map at the location of the results
@@ -339,6 +345,16 @@ const geocoderContainer = geocoder.onAdd(map);
 
 // append the geocoder container to a separate <div> element
 document.getElementById("geocoder-container").appendChild(geocoderContainer);
+
+// add functionality to shoelace button to open / close filter drawer
+document.addEventListener("DOMContentLoaded", function () {
+  const drawer = document.querySelector(".drawer-placement");
+  const openButton = document.querySelector(".openDrawer");
+  const closeButton = drawer.querySelector("sl-button[variant='primary']");
+
+  openButton.addEventListener("click", () => drawer.show());
+  closeButton.addEventListener("click", () => drawer.hide());
+});
 
 // load the Counties
 fetch("data/ATL_counties.geojson")
