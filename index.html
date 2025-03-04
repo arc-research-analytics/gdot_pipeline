@@ -7,6 +7,8 @@
       name="viewport"
       content="initial-scale=1,maximum-scale=1,user-scalable=no"
     />
+
+    <!-- mapbox -->
     <link
       href="https://api.mapbox.com/mapbox-gl-js/v3.10.0/mapbox-gl.css"
       rel="stylesheet"
@@ -21,23 +23,48 @@
     <!-- google font -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 
+    <!-- shoelace for UI components -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.0/cdn/themes/light.css" />
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.0/cdn/shoelace-autoloader.js"></script>
+    
+
   </head>
   <body>
     
+    <!-- container for the geocoder search -->
     <div id="geocoder-container"></div>
+
+    <!-- main map div -->
     <div id="map"></div>
+
+    <!-- holds the text box showing the last updated date -->
     <div id="last-updated"></div>
+
+    <!-- div for the project listing table -->
     <div class="map-overlay">
       <fieldset>
           <input id="feature-filter" type="text" placeholder="Search to filter projects:">
       </fieldset>
       <div id="feature-listing" class="listing"></div>
     </div>
+
+    <!-- header -->
     <header>
-      Metro Atlanta GDOT Projects
+      GDOT Projects
     </header>    
+
+    <!-- shoelace drawer for filters -->
+    <sl-drawer label="Map Filters" class="drawer-placement">
+      <p>This drawer slides in from the start.</p>
+      <sl-button slot="footer" variant="primary">Close</sl-button>
+    </sl-drawer>
+
+    <sl-button class="openDrawer" variant="primary" outline>Additional filters</sl-button>
+
+    <!-- logos -->
     <div><img src="assets/arc_logo.png" alt="Logo" class="arc-logo"></div>
     <div><img src="assets/gdot_logo.png" alt="Logo" class="gdot-logo"></div>
+
     <!-- Reference the external JavaScript file -->
     <script src="script.js"></script>
   </body>

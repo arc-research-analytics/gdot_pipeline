@@ -5,8 +5,8 @@ body {
   }
 
 header {
-    background-color: #0096FF;  /* Off-white */
-    color: #fff;  /* Dark gray text */
+    background-color: #0069b3; 
+    color: #fff;
     text-align: left;
     padding: 10px;
     font-size: 25px;
@@ -39,11 +39,41 @@ header {
   z-index: 2;
 }
 
+/* Base styling: transparent background, blue border */
+sl-button.openDrawer {
+  background-color: transparent!important;
+  border: 1px solid #0069b3; /* Fix: Explicit border */
+  color: white;
+  font-size: 20px;
+  border-radius: 6px;
+  transition: var(--sl-transition-medium) background-color ease, var(--sl-transition-medium) border ease;
+  
+  /* Positioning */
+  position: absolute;
+  bottom: 100px;
+  right: 40px;
+  z-index: 99;
+}
+
+/* Hover effect: blue background, white text */
+sl-button.openDrawer::part(base):hover {
+  background-color: transparent;
+  color: white;
+  border: 1px solid #0069b3;
+  border-color: #00508a; /* Darker blue border on hover */
+}
+
+
+
 #geocoder-container {
   position: absolute;
   top: 0.5px;
   right: 0px!important;
   z-index: 99!important;
+}
+
+#geocoder-container:hover {
+  opacity: 1!important;
 }
 
 #geocoder-container .mapboxgl-ctrl-geocoder input {
