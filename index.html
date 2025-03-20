@@ -42,9 +42,7 @@
 
     <!-- div for the project listing table -->
     <div class="map-overlay">
-      <fieldset>
-          <input id="feature-filter" type="text" placeholder="Search to filter projects:">
-      </fieldset>
+      <p id="dynamic-table-info">Click on a project to visit the GDOT project page.</p>
       <div id="feature-listing" class="listing"></div>
     </div>
 
@@ -54,17 +52,73 @@
     </header>    
 
     <!-- shoelace drawer for filters -->
-    <sl-drawer label="Map Filters" class="drawer-placement">
-      <p>Placeholder for additional map filters.</p>
+    <sl-drawer label="Filter map by:" placement="start" class="drawer-placement">
+
+      <!-- dropdown for map layers -->
+      <sl-select id="statusSelect" label="Construction Status" value="PRE-CONSTRUCTION">
+        <sl-option value="PRE-CONSTRUCTION">Pre-Construction</sl-option>
+        <sl-option value="UNDER-CONSTRUCTION">Under Construction</sl-option>
+        <sl-option value="COMPLETED-CONSTRUCTION">Completed</sl-option>
+      </sl-select>
+      
+      <!-- vertical spacing -->
+      <br/>
+      <br/>
+      <br/>
+
+      <sl-select id="districtSelect" label="Congressional District" value=10>
+        <sl-option value=1>1</sl-option>
+        <sl-option value=2>2</sl-option>
+        <sl-option value=3>3</sl-option>
+        <sl-option value=4>4</sl-option>
+        <sl-option value=5>5</sl-option>
+        <sl-option value=6>6</sl-option>
+        <sl-option value=7>7</sl-option>
+        <sl-option value=8>8</sl-option>
+        <sl-option value=9>9</sl-option>
+        <sl-option value=10>10</sl-option>
+        <sl-option value=11>11</sl-option>
+        <sl-option value=12>12</sl-option>
+        <sl-option value=13>13</sl-option>
+        <sl-option value=14>14</sl-option>
+      </sl-select>
+
+      <!-- vertical spacing -->
+      <br/>
+      <br/>
+      <br/>
+
+      <!-- Download button -->
+       <div class="btn-container">
+        <sl-button id="downloadBtn" variant="success" outline>Download Filtered Data</sl-button>
+      </div>
+
+      <!-- close button -->
       <sl-button slot="footer" variant="primary">
         Close
       </sl-button>
     </sl-drawer>
 
-    <sl-button class="openDrawer" variant="primary" outline>
+    <sl-button class="openDrawer" variant="plain" outline>
       <sl-icon slot="suffix" name="funnel"></sl-icon>
-      Layers & filters
+      Map layers & filters
     </sl-button>
+
+     <!-- Splash Page as a Dialog -->
+     <!-- <sl-dialog id="splashDialog" label="Welcome to the GDOT Projects Map!" open>
+      <p>
+        This map was developed by the Research and Analytics Department at the Atlanta Regional Commission. The source data is the Georgia Department of Transportation (GDOT), and this map is updated regularly. 
+        <br/>
+        <br/>
+        You can filter projects appearing in the table by zooming and panning the map. Access additional filters from the button beneath the project table. 
+        <br/>
+        <br/>
+        For any questions, please <a href="mailto:wwright@atlantaregional.org?subject=Question about GDOT Projects Map" style="text-decoration: none; color: #08306b;"><b>email us!</b></a>
+      </p>
+      <br/>
+      <sl-checkbox id="dontShowCheckbox">Don't show this again</sl-checkbox>
+      <sl-button slot="footer" variant="primary" id="closeBtn">Got it!</sl-button>
+    </sl-dialog> -->
 
     <!-- logos -->
     <div><img src="assets/arc_logo.png" alt="Logo" class="arc-logo"></div>

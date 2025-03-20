@@ -1,0 +1,21 @@
+{
+"type": "FeatureCollection",
+"name": "cdistricts_centroids",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "DISTRICT": 2 }, "geometry": { "type": "Point", "coordinates": [ -84.400579900999318, 31.7699982147683 ] } },
+{ "type": "Feature", "properties": { "DISTRICT": 3 }, "geometry": { "type": "Point", "coordinates": [ -84.775140086363393, 33.204916688636935 ] } },
+{ "type": "Feature", "properties": { "DISTRICT": 1 }, "geometry": { "type": "Point", "coordinates": [ -81.808922967179257, 31.423768751212481 ] } },
+{ "type": "Feature", "properties": { "DISTRICT": 8 }, "geometry": { "type": "Point", "coordinates": [ -83.297122098731521, 31.736519775288063 ] } },
+{ "type": "Feature", "properties": { "DISTRICT": 12 }, "geometry": { "type": "Point", "coordinates": [ -82.284606161711821, 32.776423121877542 ] } },
+{ "type": "Feature", "properties": { "DISTRICT": 14 }, "geometry": { "type": "Point", "coordinates": [ -85.204671389776792, 34.752275988264792 ] } },
+{ "type": "Feature", "properties": { "DISTRICT": 6 }, "geometry": { "type": "Point", "coordinates": [ -84.604806169539572, 33.766670030852673 ] } },
+{ "type": "Feature", "properties": { "DISTRICT": 11 }, "geometry": { "type": "Point", "coordinates": [ -84.699316644372246, 34.31242105335501 ] } },
+{ "type": "Feature", "properties": { "DISTRICT": 5 }, "geometry": { "type": "Point", "coordinates": [ -84.37929376613279, 33.69658286679455 ] } },
+{ "type": "Feature", "properties": { "DISTRICT": 4 }, "geometry": { "type": "Point", "coordinates": [ -84.167867618350385, 33.749134322298396 ] } },
+{ "type": "Feature", "properties": { "DISTRICT": 13 }, "geometry": { "type": "Point", "coordinates": [ -84.007281469290163, 33.628325093179505 ] } },
+{ "type": "Feature", "properties": { "DISTRICT": 7 }, "geometry": { "type": "Point", "coordinates": [ -84.134874722946364, 34.335641455025304 ] } },
+{ "type": "Feature", "properties": { "DISTRICT": 9 }, "geometry": { "type": "Point", "coordinates": [ -83.624513736299747, 34.768919130233414 ] } },
+{ "type": "Feature", "properties": { "DISTRICT": 10 }, "geometry": { "type": "Point", "coordinates": [ -83.32688625349148, 33.720485893817695 ] } }
+]
+}

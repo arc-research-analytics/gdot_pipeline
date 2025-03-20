@@ -5,7 +5,7 @@ body {
   }
 
 header {
-    background-color: #0069b3; 
+    background-color: #005495; 
     color: #fff;
     text-align: left;
     padding: 10px;
@@ -41,26 +41,27 @@ header {
 
 /* Base styling: transparent background, blue border */
 sl-button.openDrawer {
-  background-color: transparent!important;
-  border: 1px solid #0069b3; /* Fix: Explicit border */
+  background-color: #efefef;
+  opacity: var(--opacity-value);
   color: white;
   font-size: 20px;
-  border-radius: 6px;
+  border-radius: 10px;
+  border: none;
+  width: 350px;
   transition: var(--sl-transition-medium) background-color ease, var(--sl-transition-medium) border ease;
   
   /* Positioning */
   position: absolute;
-  bottom: 100px;
-  right: 40px;
+  bottom: 90px;
+  left: 15px;
   z-index: 99;
 }
 
 /* Hover effect: blue background, white text */
 sl-button.openDrawer::part(base):hover {
-  background-color: transparent;
+  background-color: #005495;
   color: white;
-  border: 1px solid #0069b3;
-  border-color: #00508a; /* Darker blue border on hover */
+  border: none;
 }
 
 
@@ -106,32 +107,15 @@ width: 100%;
 
 .map-overlay {
   position: absolute;
-  width: 380px;
+  width: 350px;
   top: 75px;
-  bottom: 90px;
+  bottom: 150px;
   left: 15px;
   background-color: #efefef;
   opacity: var(--opacity-value);
   max-height: 100%;
   overflow: hidden;
   border-radius: 10px;
-}
-
-.map-overlay fieldset {
-  background: #ddd;
-  border: none;
-  padding: 5px;
-  margin: 3px;
-}
-
-.map-overlay input {
-  display: block;
-  border: none;
-  width: 100%;
-  border-radius: 3px;
-  padding: 10px;
-  margin: 0;
-  box-sizing: border-box;
 }
 
 .map-overlay .listing {
@@ -176,13 +160,29 @@ width: 100%;
   top: 15px;
 }
 
+#dynamic-table-info {
+  font-style: italic;
+  font-weight: 400;
+  font-size: 16px;
+  padding: 8px;
+  text-align: center;
+  margin: auto;
+  display: block;
+  background-color: #969696;
+}
+
+.btn-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem; /* Optional: Adds space above the button */
+}
+
 @media screen and (max-width: 768px) {
 
-  /* reposition Filter button */
+  /* reposition Filter button to be centered left-to-right */
   sl-button.openDrawer {
-    bottom: auto; /* Reset bottom positioning */
-    top: 70px;
-    right: 25px;
+    bottom: 75px;
+    width: 75px;
   }
 
   /* remove the following elements on mobile */
