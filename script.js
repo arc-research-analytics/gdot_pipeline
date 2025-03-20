@@ -287,32 +287,32 @@ map.on("click", "all-projects", (e) => {
   }
 });
 
-// Let the map filter the table based on the map extent
-map.on("moveend", () => {
-  if (projectInfo.length === 0) {
-    console.warn(
-      "Skipping updateTableFromMapExtent: projectInfo not loaded yet."
-    );
-    return;
-  }
+// // Let the map filter the table based on the map extent
+// map.on("moveend", () => {
+//   if (projectInfo.length === 0) {
+//     console.warn(
+//       "Skipping updateTableFromMapExtent: projectInfo not loaded yet."
+//     );
+//     return;
+//   }
 
-  // Get only the visible features within the map bounds
-  const visibleFeatures = map.queryRenderedFeatures(
-    [
-      [0, 0],
-      [map.getCanvas().width, map.getCanvas().height],
-    ],
-    { layers: ["all-projects"] }
-  );
+//   // Get only the visible features within the map bounds
+//   const visibleFeatures = map.queryRenderedFeatures(
+//     [
+//       [0, 0],
+//       [map.getCanvas().width, map.getCanvas().height],
+//     ],
+//     { layers: ["all-projects"] }
+//   );
 
-  // Extract project descriptions of visible features
-  const visibleDescriptions = visibleFeatures.map(
-    (feature) => feature.properties.Project_description
-  );
+//   // Extract project descriptions of visible features
+//   const visibleDescriptions = visibleFeatures.map(
+//     (feature) => feature.properties.Project_description
+//   );
 
-  // Update the table to only show visible projects
-  updateTableFromMapExtent(visibleDescriptions);
-});
+//   // Update the table to only show visible projects
+//   updateTableFromMapExtent(visibleDescriptions);
+// });
 
 // Update table based on visible map extent
 const updateTableFromMapExtent = (visibleDescriptions) => {
@@ -351,6 +351,43 @@ const updateTableFromMapExtent = (visibleDescriptions) => {
     listingEl.appendChild(itemLink);
   });
 };
+
+// Common function to filter and update the table based on map extent
+const filterAndUpdateTable = () => {
+  if (projectInfo.length === 0) {
+    console.warn(
+      "Skipping updateTableFromMapExtent: projectInfo not loaded yet."
+    );
+    return;
+  }
+
+  // Get only the visible features within the map bounds
+  const visibleFeatures = map.queryRenderedFeatures(
+    [
+      [0, 0],
+      [map.getCanvas().width, map.getCanvas().height],
+    ],
+    { layers: ["all-projects"] }
+  );
+
+  // Extract project descriptions of visible features
+  const visibleDescriptions = visibleFeatures.map(
+    (feature) => feature.properties.Project_description
+  );
+
+  // Update the table to only show visible projects
+  updateTableFromMapExtent(visibleDescriptions);
+};
+
+// Run this once when the map loads
+map.on("load", () => {
+  filterAndUpdateTable(); // Filter and update on initial load
+});
+
+// Run this on moveend to filter dynamically as the user interacts with the map
+map.on("moveend", () => {
+  filterAndUpdateTable(); // Filter and update on map move
+});
 
 // tooltips for the all-projects
 var popup = new mapboxgl.Popup({ closeButton: false });
