@@ -3,17 +3,18 @@ mapboxgl.accessToken = "pk.eyJ1Ijoid3dyaWdodDIxIiwiYSI6ImNtN2MwdjdtYjBqeTUycnBwb
 
 // define map bounds
 const bounds = [
-  [-86.96558853882759, 31.87408043011631], // Southwest coordinates
-  [-82.39296462746158, 34.86004636003112], // Northeast coordinates
+  [-90.46816803404282, 28.138365147624448], // Southwest coordinates ,
+  [-74.77089467122902, 37.588973762609974], // Northeast coordinates
 ];
 
-// instantiate map
+// -v-v-v-v-v-v-v-v MAPBOX BASEMAP -v-v-v-v-v-v-v-v
 const map = new mapboxgl.Map({
   container: "map", // container ID
   style: "mapbox://styles/mapbox/dark-v11",
-  center: [-84.49945496118643, 33.906502431340805],
-  zoom: 8.5,
-  minZoom: 8,
+  center: [-84.05, 32.84],
+  zoom: 6.5,
+  minZoom: 3,
+  maxZoom: 15,
   crossOrigin: "anonymous",
   maxBounds: bounds,
 });
@@ -28,7 +29,122 @@ map.addControl(scale);
 let projectInfo = [];
 let hoveredProjectId = null;
 
-// Load the projects, create the filter and table
+// Load the counties AFTER map style is loaded
+map.on("load", () => {
+  // find the first symbol layer in the style (usually the labels)
+  const layers = map.getStyle().layers;
+  let firstSymbolId;
+  for (const layer of layers) {
+    if (layer.type === "symbol") {
+      firstSymbolId = layer.id;
+      break;
+    }
+  }
+
+  // fetch to add county outlines
+  fetch("data/counties/GA_counties_simp.geojson")
+    .then((response) => response.json())
+    .then((data) => {
+      map.addLayer({
+        id: "ga-counties-outline",
+        type: "line",
+        source: {
+          type: "geojson",
+          data: data,
+        },
+        minzoom: 8.5,
+        maxzoom: 15,
+        paint: {
+          "line-color": "#525252",
+          "line-width": 1, // Fill opacity
+          "line-dasharray": [2, 2],
+        },
+      });
+    });
+
+  // fetch to add county labels
+  fetch("data/counties/GA_counties_centroids.geojson")
+    .then((response) => response.json())
+    .then((data) => {
+      map.addLayer(
+        {
+          id: "county-labels",
+          type: "symbol",
+          source: {
+            type: "geojson",
+            data: data,
+          },
+          slot: "top",
+          minzoom: 8.5,
+          maxzoom: 15,
+          layout: {
+            "text-field": "{ShortLabel} County",
+            "text-size": 14,
+            "text-allow-overlap": true,
+            "text-font": ["Roboto Bold"],
+          },
+          paint: {
+            "text-color": "#525252",
+            "text-halo-color": "#000000",
+            "text-halo-width": 1,
+          },
+        },
+        firstSymbolId
+      );
+    });
+
+  // fetch to add Congressional Districts
+  fetch("data/congressional_districts/cdistricts.geojson")
+    .then((response) => response.json())
+    .then((data) => {
+      map.addLayer({
+        id: "ga-congressional-districts",
+        type: "line",
+        source: {
+          type: "geojson",
+          data: data,
+        },
+        slot: "bottom",
+        paint: {
+          "line-color": "#bdbdbd",
+          "line-width": 2,
+        },
+      });
+    });
+
+  // fetch to add Congressional District labels
+  fetch("data/congressional_districts/cdistricts_centroids.geojson")
+    .then((response) => response.json())
+    .then((data) => {
+      map.addLayer(
+        {
+          id: "cd-labels",
+          type: "symbol",
+          source: {
+            type: "geojson",
+            data: data,
+          },
+          slot: "top",
+          minzoom: 7.5,
+          maxzoom: 15,
+          layout: {
+            "text-field": "District {DISTRICT}",
+            "text-size": 16,
+            "text-allow-overlap": true,
+            "text-font": ["Roboto Bold"],
+          },
+          paint: {
+            "text-color": "#bdbdbd",
+            "text-halo-color": "#000000",
+            "text-halo-width": 1,
+          },
+        },
+        firstSymbolId
+      );
+    });
+});
+
+// Load the projects, create the filter and table ---------v-----------
 fetch("data/GDOT_export.geojson")
   .then((response) => response.json())
   .then((data) => {
@@ -39,22 +155,43 @@ fetch("data/GDOT_export.geojson")
 
     // Add the GeoJSON layer to the map
     map.addLayer({
-      id: "pc-projects",
+      id: "all-projects",
       type: "line",
       source: "projects-source",
+      slot: "middle",
       paint: {
         "line-color": [
           "case",
           ["boolean", ["feature-state", "hover"], false],
-          "#4db6ff", // color on hover
-          "#0069b3", // default color
+          [
+            "match",
+            ["get", "CONSTRUCTION_STATUS_DERIVED"],
+            "PRE-CONSTRUCTION",
+            "#fee095", // hover color for pre-construction
+            "UNDER-CONSTRUCTION",
+            "#04ff76", // hover color for under-construction
+            "COMPLETED-CONSTRUCTION",
+            "#0190ff", // hover color for completed-construction
+            "#888888", // default hover color
+          ],
+          [
+            "match",
+            ["get", "CONSTRUCTION_STATUS_DERIVED"],
+            "PRE-CONSTRUCTION",
+            "#fdb602", // default color for pre-construction
+            "UNDER-CONSTRUCTION",
+            "#00843c", // default color for under-construction
+            "COMPLETED-CONSTRUCTION",
+            "#005495", // default color for completed-construction
+            "#888888", // default color
+          ],
         ],
         // "line-width": 8,
         "line-width": [
           "case",
           ["boolean", ["feature-state", "hover"], false],
           11, // width on hover
-          7, // default width]
+          5, // default width]
         ],
         "line-opacity": 0.8,
       },
@@ -65,6 +202,7 @@ fetch("data/GDOT_export.geojson")
       return {
         description: feature.properties.Project_description,
         url: feature.properties.Project_URL,
+        constructionStatus: feature.properties.CONSTRUCTION_STATUS_DERIVED,
         featureId: feature.id,
       };
     });
@@ -119,7 +257,7 @@ fetch("data/GDOT_export.geojson")
         )
         .map((project) => project.description);
 
-      map.setFilter("pc-projects", [
+      map.setFilter("all-projects", [
         "any",
         ...filteredDescriptions.map((description) => [
           "==",
@@ -131,43 +269,10 @@ fetch("data/GDOT_export.geojson")
 
     // Initial update of the table
     updateTable("");
-
-    // Add event listener to the filter input field
-    const filterInput = document.getElementById("feature-filter");
-    filterInput.addEventListener("input", (e) => {
-      const filterQuery = e.target.value;
-      updateTable(filterQuery);
-
-      // Show or hide the clear button based on the input value
-      const clearButton = filterInput.parentNode.querySelector("span");
-      if (filterQuery === "") {
-        if (clearButton) {
-          clearButton.style.display = "none";
-        }
-      } else {
-        if (!clearButton) {
-          const newClearButton = document.createElement("span");
-          newClearButton.textContent = "clear";
-          newClearButton.style.cursor = "pointer";
-          newClearButton.style.marginLeft = "5px";
-          newClearButton.style.marginTop = "2px";
-          newClearButton.style.fontSize = "13px";
-          filterInput.parentNode.appendChild(newClearButton);
-          newClearButton.addEventListener("click", () => {
-            filterInput.value = "";
-            updateTable("");
-            newClearButton.style.display = "none";
-            map.setFilter("pc-projects", null);
-          });
-        } else {
-          clearButton.style.display = "block";
-        }
-      }
-    });
   });
 
 // Mouse click event to link to project URL
-map.on("click", "pc-projects", (e) => {
+map.on("click", "all-projects", (e) => {
   if (e.features.length > 0) {
     // Get the clicked feature's properties
     const clickedFeature = e.features[0].properties;
@@ -182,7 +287,7 @@ map.on("click", "pc-projects", (e) => {
   }
 });
 
-// Add event listener to the map to filter table
+// Let the map filter the table based on the map extent
 map.on("moveend", () => {
   if (projectInfo.length === 0) {
     console.warn(
@@ -197,7 +302,7 @@ map.on("moveend", () => {
       [0, 0],
       [map.getCanvas().width, map.getCanvas().height],
     ],
-    { layers: ["pc-projects"] }
+    { layers: ["all-projects"] }
   );
 
   // Extract project descriptions of visible features
@@ -247,11 +352,11 @@ const updateTableFromMapExtent = (visibleDescriptions) => {
   });
 };
 
-// tooltips for the pc-projects
+// tooltips for the all-projects
 var popup = new mapboxgl.Popup({ closeButton: false });
 
 // change the cursor to a pointer when the mouse is over a feature
-map.on("mousemove", "pc-projects", (e) => {
+map.on("mousemove", "all-projects", (e) => {
   // Change the cursor style as a UI indicator.
   map.getCanvas().style.cursor = "pointer";
 
@@ -282,7 +387,7 @@ map.on("mousemove", "pc-projects", (e) => {
 });
 
 // remove the tooltip when not hovering
-map.on("mouseleave", "pc-projects", () => {
+map.on("mouseleave", "all-projects", () => {
   map.getCanvas().style.cursor = "";
   popup.remove();
 
@@ -302,7 +407,10 @@ const geocoder = new MapboxGeocoder({
   mapboxgl: mapboxgl,
   marker: false, // disable the default marker
   placeholder: "Search for an address:",
-  bbox: [-85.046, 33.025, -83.143, 34.982],
+  bbox: [
+    -85.89267692462637, 30.054826521831735, -80.98644957596557,
+    35.92237987867771,
+  ],
   limit: 5,
 });
 
@@ -360,67 +468,7 @@ document.addEventListener("DOMContentLoaded", function () {
   closeButton.addEventListener("click", () => drawer.hide());
 });
 
-// load the Counties
-fetch("data/ATL_counties.geojson")
-  .then((response) => response.json())
-  .then((data) => {
-    // Add the fill layer of the counties
-    map.addLayer({
-      id: "atl-counties",
-      type: "fill",
-      source: {
-        type: "geojson",
-        data: data,
-      },
-      paint: {
-        "fill-color": "#FFFFFF",
-        "fill-opacity": 0,
-      },
-    });
-
-    // Add the outline (stroke) layer for counties
-    map.addLayer({
-      id: "ga-counties-outline",
-      type: "line",
-      source: {
-        type: "geojson",
-        data: data,
-      },
-      paint: {
-        "line-color": "#D3D3D3",
-        "line-width": 1, // Stroke width in pixels
-      },
-    });
-  });
-
-// load the county labels using fetch
-fetch("data/ATL_counties_centroids.geojson")
-  .then((response) => response.json())
-  .then((data) => {
-    map.addLayer({
-      id: "county-labels",
-      type: "symbol",
-      source: {
-        type: "geojson",
-        data: data,
-      },
-      minzoom: 9,
-      maxzoom: 13,
-      layout: {
-        "text-field": "{NAME} County",
-        "text-size": 16,
-        "text-allow-overlap": true,
-        "text-font": ["Roboto Bold"],
-      },
-      paint: {
-        "text-color": "#FFFFFF",
-        "text-halo-color": "#000000",
-        "text-halo-width": 1,
-      },
-    });
-  });
-
-// load & style the text box showing the last updated date
+// "Data current as of" text box
 fetch("data/current_date.txt")
   .then((response) => response.text())
   .then((date) => {
@@ -434,3 +482,140 @@ fetch("data/current_date.txt")
     document.getElementById("last-updated").style.color = "#fff";
     document.getElementById("last-updated").style.opacity = 0.6;
   });
+
+// modify the filter button based on screen size
+function updateButtonText() {
+  const button = document.querySelector(".openDrawer");
+
+  if (window.innerWidth <= 768) {
+    button.textContent = "Filters";
+  } else {
+    button.textContent = "Map layers & filters";
+  }
+}
+
+// Run function on page load to change button based on screen size
+updateButtonText();
+
+// Listen for window resize events
+window.addEventListener("resize", updateButtonText);
+
+// Function to update the map layer based on filters
+const updateMapLayer = () => {
+  const statusSelect = document.getElementById("statusSelect");
+  const districtSelect = document.getElementById("districtSelect");
+
+  if (!statusSelect || !districtSelect) {
+    console.error(
+      "layerSelect or districtSelect element not found in the DOM."
+    );
+    return; // Prevent further errors
+  }
+
+  const selectedStatus = statusSelect.value;
+  const selectedDistrict = parseInt(districtSelect.value, 10);
+
+  if (!map.isStyleLoaded()) {
+    setTimeout(() => {
+      updateMapLayer();
+    }, 5);
+    return;
+  }
+
+  // Apply the filter to match selected construction statuses and districts
+  map.setFilter("all-projects", [
+    "all",
+    [
+      "in",
+      ["downcase", ["get", "CONSTRUCTION_STATUS_DERIVED"]],
+      ["literal", selectedStatus.toLowerCase()],
+    ],
+    ["==", ["get", "DISTRICT"], selectedDistrict],
+  ]);
+};
+
+// Function to convert GeoJSON to CSV
+const geoJSONToCSV = (geojson) => {
+  const features = geojson.features;
+  if (features.length === 0) {
+    console.warn("No features found in the filtered data.");
+    return null;
+  }
+
+  const headers = Object.keys(features[0].properties);
+  const csvRows = [];
+  csvRows.push(headers.join(",")); // Add header row
+
+  features.forEach((feature) => {
+    const row = headers.map((header) => {
+      let value = feature.properties[header];
+      // Escape commas and quotes if necessary
+      if (typeof value === "string") {
+        value = `"${value.replace(/"/g, '""')}"`;
+      }
+      return value;
+    });
+    csvRows.push(row.join(","));
+  });
+
+  return csvRows.join("\n");
+};
+
+// Function to download filtered data as CSV
+const downloadFilteredData = async () => {
+  // Get features from the filtered "all-projects" layer
+  const features = map.queryRenderedFeatures({
+    layers: ["all-projects"],
+  });
+
+  if (!features || features.length === 0) {
+    alert("No filtered data available to download.");
+    return;
+  }
+
+  // Create a GeoJSON feature collection from the filtered features
+  const filteredGeoJSON = {
+    type: "FeatureCollection",
+    features: features,
+  };
+
+  // Convert filtered GeoJSON to CSV
+  const csvData = geoJSONToCSV(filteredGeoJSON);
+
+  if (!csvData) {
+    alert("No data available to export.");
+    return;
+  }
+
+  // Create a Blob and download the CSV
+  const blob = new Blob([csvData], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.setAttribute("href", url);
+  link.setAttribute("download", "GDOT_projects_export.csv");
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+
+// Run this once on page load to apply the default filter
+document.addEventListener("DOMContentLoaded", () => {
+  const statusSelect = document.getElementById("statusSelect");
+  const districtSelect = document.getElementById("districtSelect");
+  const downloadBtn = document.getElementById("downloadBtn");
+
+  if (statusSelect && districtSelect) {
+    statusSelect.addEventListener("sl-change", updateMapLayer);
+    districtSelect.addEventListener("sl-change", updateMapLayer);
+    updateMapLayer(); // Run once on load
+  } else {
+    console.error("statusSelect element not found at DOMContentLoaded.");
+  }
+
+  // Attach event listener to download button
+  if (downloadBtn) {
+    downloadBtn.addEventListener("click", downloadFilteredData);
+  } else {
+    console.error("downloadBtn element not found at DOMContentLoaded.");
+  }
+});
