@@ -3,14 +3,37 @@ mapboxgl.accessToken = "MAPBOX_API_KEY_PLACEHOLDER";
 
 // define map bounds
 const bounds = [
-  [-90.46816803404282, 28.138365147624448], // Southwest coordinates ,
+  [-90.46816803404282, 28.138365147624448], // Southwest coordinates
   [-74.77089467122902, 37.588973762609974], // Northeast coordinates
 ];
 
-// -v-v-v-v-v-v-v-v MAPBOX BASEMAP -v-v-v-v-v-v-v-v
+// -v-v-v-v-v-v-v-v MAPBOX MAP -v-v-v-v-v-v-v-v
 const map = new mapboxgl.Map({
   container: "map", // container ID
-  style: "mapbox://styles/mapbox/dark-v11",
+  style: {
+    version: 8,
+    sources: {
+      "carto-voyager": {
+        type: "raster",
+        tiles: [
+          "https://a.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
+        ],
+        tileSize: 256,
+        attribution:
+          '&copy; <a href="https://carto.com/">CARTO</a> | <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>',
+      },
+    },
+    glyphs: "mapbox://fonts/mapbox/{fontstack}/{range}.pbf",
+    layers: [
+      {
+        id: "carto-voyager-layer",
+        type: "raster",
+        source: "carto-voyager",
+        minzoom: 0,
+        maxzoom: 20,
+      },
+    ],
+  },
   center: [-84.05, 32.84],
   zoom: 6.5,
   minZoom: 3,
@@ -41,26 +64,26 @@ map.on("load", () => {
     }
   }
 
-  // fetch to add county outlines
-  fetch("data/counties/GA_counties_simp.geojson")
-    .then((response) => response.json())
-    .then((data) => {
-      map.addLayer({
-        id: "ga-counties-outline",
-        type: "line",
-        source: {
-          type: "geojson",
-          data: data,
-        },
-        minzoom: 8.5,
-        maxzoom: 15,
-        paint: {
-          "line-color": "#525252",
-          "line-width": 1, // Fill opacity
-          "line-dasharray": [2, 2],
-        },
-      });
-    });
+  // // fetch to add county outlines
+  // fetch("data/counties/GA_counties_simp.geojson")
+  //   .then((response) => response.json())
+  //   .then((data) => {
+  //     map.addLayer({
+  //       id: "ga-counties-outline",
+  //       type: "line",
+  //       source: {
+  //         type: "geojson",
+  //         data: data,
+  //       },
+  //       minzoom: 8.5,
+  //       maxzoom: 15,
+  //       paint: {
+  //         "line-color": "#525252",
+  //         "line-width": 1, // Fill opacity
+  //         "line-dasharray": [2, 2],
+  //       },
+  //     });
+  //   });
 
   // fetch to add county labels
   fetch("data/counties/GA_counties_centroids.geojson")
@@ -84,9 +107,9 @@ map.on("load", () => {
             "text-font": ["Roboto Bold"],
           },
           paint: {
-            "text-color": "#525252",
-            "text-halo-color": "#000000",
-            "text-halo-width": 1,
+            "text-color": "#000000",
+            "text-halo-color": "#FFFFFF",
+            "text-halo-width": 0.5,
           },
         },
         firstSymbolId
@@ -106,7 +129,7 @@ map.on("load", () => {
         },
         slot: "bottom",
         paint: {
-          "line-color": "#bdbdbd",
+          "line-color": "#525252",
           "line-width": 2,
         },
       });
@@ -134,7 +157,7 @@ map.on("load", () => {
             "text-font": ["Roboto Bold"],
           },
           paint: {
-            "text-color": "#bdbdbd",
+            "text-color": "#f0f0f0",
             "text-halo-color": "#000000",
             "text-halo-width": 1,
           },
@@ -161,30 +184,15 @@ fetch("data/GDOT_export.geojson")
       slot: "middle",
       paint: {
         "line-color": [
-          "case",
-          ["boolean", ["feature-state", "hover"], false],
-          [
-            "match",
-            ["get", "CONSTRUCTION_STATUS_DERIVED"],
-            "PRE-CONSTRUCTION",
-            "#fee095", // hover color for pre-construction
-            "UNDER-CONSTRUCTION",
-            "#04ff76", // hover color for under-construction
-            "COMPLETED-CONSTRUCTION",
-            "#0190ff", // hover color for completed-construction
-            "#888888", // default hover color
-          ],
-          [
-            "match",
-            ["get", "CONSTRUCTION_STATUS_DERIVED"],
-            "PRE-CONSTRUCTION",
-            "#fdb602", // default color for pre-construction
-            "UNDER-CONSTRUCTION",
-            "#00843c", // default color for under-construction
-            "COMPLETED-CONSTRUCTION",
-            "#005495", // default color for completed-construction
-            "#888888", // default color
-          ],
+          "match",
+          ["get", "CONSTRUCTION_STATUS_DERIVED"],
+          "PRE-CONSTRUCTION",
+          "#CC5500", // default color for pre-construction
+          "UNDER-CONSTRUCTION",
+          "#009f00", // default color for under-construction
+          "COMPLETED-CONSTRUCTION",
+          "#00009f", // default color for completed-construction
+          "#888888", // default color
         ],
         // "line-width": 8,
         "line-width": [
@@ -287,33 +295,6 @@ map.on("click", "all-projects", (e) => {
   }
 });
 
-// // Let the map filter the table based on the map extent
-// map.on("moveend", () => {
-//   if (projectInfo.length === 0) {
-//     console.warn(
-//       "Skipping updateTableFromMapExtent: projectInfo not loaded yet."
-//     );
-//     return;
-//   }
-
-//   // Get only the visible features within the map bounds
-//   const visibleFeatures = map.queryRenderedFeatures(
-//     [
-//       [0, 0],
-//       [map.getCanvas().width, map.getCanvas().height],
-//     ],
-//     { layers: ["all-projects"] }
-//   );
-
-//   // Extract project descriptions of visible features
-//   const visibleDescriptions = visibleFeatures.map(
-//     (feature) => feature.properties.Project_description
-//   );
-
-//   // Update the table to only show visible projects
-//   updateTableFromMapExtent(visibleDescriptions);
-// });
-
 // Update table based on visible map extent
 const updateTableFromMapExtent = (visibleDescriptions) => {
   if (projectInfo.length === 0) return; // Wait for projectInfo to load
@@ -379,12 +360,12 @@ const filterAndUpdateTable = () => {
   updateTableFromMapExtent(visibleDescriptions);
 };
 
-// Run this once when the map loads
+// Filter and update table on load
 map.on("load", () => {
   filterAndUpdateTable(); // Filter and update on initial load
 });
 
-// Run this on moveend to filter dynamically as the user interacts with the map
+// Filter and update table when the user moves the map
 map.on("moveend", () => {
   filterAndUpdateTable(); // Filter and update on map move
 });
@@ -495,16 +476,6 @@ const geocoderContainer = geocoder.onAdd(map);
 // append the geocoder container to a separate <div> element
 document.getElementById("geocoder-container").appendChild(geocoderContainer);
 
-// add functionality to shoelace button to open / close filter drawer
-document.addEventListener("DOMContentLoaded", function () {
-  const drawer = document.querySelector(".drawer-placement");
-  const openButton = document.querySelector(".openDrawer");
-  const closeButton = drawer.querySelector("sl-button[variant='primary']");
-
-  openButton.addEventListener("click", () => drawer.show());
-  closeButton.addEventListener("click", () => drawer.hide());
-});
-
 // "Data current as of" text box
 fetch("data/current_date.txt")
   .then((response) => response.text())
@@ -513,10 +484,10 @@ fetch("data/current_date.txt")
     document.getElementById("last-updated").textContent = lastUpdatedText;
     document.getElementById("last-updated").style.zIndex = 1;
     document.getElementById("last-updated").style.position = "absolute";
-    document.getElementById("last-updated").style.bottom = "8px";
+    document.getElementById("last-updated").style.bottom = "9px";
     document.getElementById("last-updated").style.left = "100px";
     document.getElementById("last-updated").style.fontSize = "15px";
-    document.getElementById("last-updated").style.color = "#fff";
+    document.getElementById("last-updated").style.color = "#525252";
     document.getElementById("last-updated").style.opacity = 0.6;
   });
 
@@ -527,7 +498,7 @@ function updateButtonText() {
   if (window.innerWidth <= 768) {
     button.textContent = "Filters";
   } else {
-    button.textContent = "Map layers & filters";
+    button.textContent = "Open map filters";
   }
 }
 
@@ -560,16 +531,28 @@ const updateMapLayer = () => {
   }
 
   // Apply the filter to match selected construction statuses and districts
-  map.setFilter("all-projects", [
-    "all",
-    [
-      "in",
-      ["downcase", ["get", "CONSTRUCTION_STATUS_DERIVED"]],
-      ["literal", selectedStatus.toLowerCase()],
-    ],
-    ["==", ["get", "DISTRICT"], selectedDistrict],
-  ]);
+  if (selectedStatus === "ALL") {
+    map.setFilter("all-projects", [
+      "all",
+      ["==", ["get", "DISTRICT"], selectedDistrict],
+    ]);
+  } else {
+    map.setFilter("all-projects", [
+      "all",
+      [
+        "in",
+        ["downcase", ["get", "CONSTRUCTION_STATUS_DERIVED"]],
+        ["literal", selectedStatus.toLowerCase()],
+      ],
+      ["==", ["get", "DISTRICT"], selectedDistrict],
+    ]);
+  }
 };
+
+// on load, update the map layer on initial load
+map.on("load", () => {
+  updateMapLayer(); // Filter and update on initial load
+});
 
 // Function to convert GeoJSON to CSV
 const geoJSONToCSV = (geojson) => {
@@ -640,19 +623,90 @@ document.addEventListener("DOMContentLoaded", () => {
   const statusSelect = document.getElementById("statusSelect");
   const districtSelect = document.getElementById("districtSelect");
   const downloadBtn = document.getElementById("downloadBtn");
+  const drawer = document.querySelector(".drawer-placement");
+  const openButton = document.querySelector(".openDrawer");
+  const closeButton = drawer.querySelector(".close-button");
+  const legendPreConstruction = document.getElementById(
+    "legend-pre-construction"
+  );
+  const legendUnderConstruction = document.getElementById(
+    "legend-under-construction"
+  );
+  const legendConstructionComplete = document.getElementById(
+    "legend-construction-complete"
+  );
+  const legendAll = document.getElementById("legend-all");
+
+  // ✅ Show Pre-Construction legend by default on load
+  legendPreConstruction.style.display = "block";
+  legendUnderConstruction.style.display = "none";
+  legendConstructionComplete.style.display = "none";
+  legendAll.style.display = "none";
 
   if (statusSelect && districtSelect) {
-    statusSelect.addEventListener("sl-change", updateMapLayer);
-    districtSelect.addEventListener("sl-change", updateMapLayer);
-    updateMapLayer(); // Run once on load
+    statusSelect.addEventListener("sl-change", () => {
+      updateMapLayer();
+      setTimeout(() => {
+        filterAndUpdateTable();
+      }, 100);
+
+      const selectedValue = statusSelect.value;
+      console.log("Selected value:", selectedValue);
+
+      // Show or hide the legends based on the selected value
+      if (selectedValue === "PRE-CONSTRUCTION") {
+        legendPreConstruction.style.display = "block";
+        legendUnderConstruction.style.display = "none";
+        legendConstructionComplete.style.display = "none";
+        legendAll.style.display = "none";
+      } else if (selectedValue === "UNDER-CONSTRUCTION") {
+        legendPreConstruction.style.display = "none";
+        legendUnderConstruction.style.display = "block";
+        legendConstructionComplete.style.display = "none";
+        legendAll.style.display = "none";
+      } else if (selectedValue === "COMPLETED-CONSTRUCTION") {
+        legendPreConstruction.style.display = "none";
+        legendUnderConstruction.style.display = "none";
+        legendConstructionComplete.style.display = "block";
+        legendAll.style.display = "none";
+      } else if (selectedValue === "ALL") {
+        legendPreConstruction.style.display = "none";
+        legendUnderConstruction.style.display = "none";
+        legendConstructionComplete.style.display = "none";
+        legendAll.style.display = "block";
+      }
+    });
+
+    districtSelect.addEventListener("sl-change", () => {
+      updateMapLayer();
+      setTimeout(() => {
+        filterAndUpdateTable();
+      }, 100);
+    });
+
+    // Run both functions once on load
+    updateMapLayer();
+    filterAndUpdateTable();
   } else {
     console.error("statusSelect element not found at DOMContentLoaded.");
   }
 
   // Attach event listener to download button
   if (downloadBtn) {
-    downloadBtn.addEventListener("click", downloadFilteredData);
+    downloadBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      downloadFilteredData();
+    });
   } else {
     console.error("downloadBtn element not found at DOMContentLoaded.");
+  }
+
+  openButton.addEventListener("click", () => drawer.show());
+
+  // Attach event listener to close button
+  if (drawer && closeButton) {
+    closeButton.addEventListener("click", () => drawer.hide());
+  } else {
+    console.error("drawer or closeButton not found at DOMContentLoaded.");
   }
 });
