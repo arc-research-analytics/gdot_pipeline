@@ -52,7 +52,7 @@ sl-button.openDrawer {
   
   /* Positioning */
   position: absolute;
-  bottom: 90px;
+  bottom: 80px;
   left: 15px;
   z-index: 99;
 }
@@ -64,6 +64,25 @@ sl-button.openDrawer::part(base):hover {
   border: none;
 }
 
+#downloadBtn {
+  background-color: #efefef;
+  opacity: var(--opacity-value);
+  color: white;
+  font-size: 20px;
+  border-radius: 10px;
+  border: none;
+  width: 200px;
+  transition: var(--sl-transition-medium) background-color ease, var(--sl-transition-medium) border ease;
+  position: absolute;
+  bottom: 100px;
+  right: 15px;
+}
+
+#downloadBtn::part(base):hover {
+  background-color: #005495;
+  color: white;
+  border: none;
+}
 
 
 #geocoder-container {
@@ -92,7 +111,7 @@ width: 100%;
 
 /* set global styling variables */
 :root {
-  --opacity-value: 0.75;
+  --opacity-value: 0.90;
   --topline-margin: 25px;
 }
 
@@ -116,6 +135,7 @@ width: 100%;
   max-height: 100%;
   overflow: hidden;
   border-radius: 10px;
+  border: 1px solid black;
 }
 
 .map-overlay .listing {
@@ -171,10 +191,24 @@ width: 100%;
   background-color: #969696;
 }
 
-.btn-container {
-  display: flex;
-  justify-content: center;
-  margin-top: 1rem; /* Optional: Adds space above the button */
+.legend {
+  position: absolute;
+  bottom: 150px;
+  right: 15px;
+  background-color: #f0f0f0;
+  padding: 10px;
+  border: 1px solid black;
+  border-radius: 6px;
+  display: block;
+  opacity: var(--opacity-value);
+  font: 14px/20px "Helvetica Neue", Arial, Helvetica, sans-serif;
+}
+
+.legend-color {
+  display: inline-block;
+  width: 20px;
+  height: 10px;
+  margin-right: 10px;
 }
 
 @media screen and (max-width: 768px) {

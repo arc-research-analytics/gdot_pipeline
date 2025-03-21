@@ -56,6 +56,7 @@
 
       <!-- dropdown for map layers -->
       <sl-select id="statusSelect" label="Construction Status" value="PRE-CONSTRUCTION">
+        <sl-option value="ALL">All</sl-option>
         <sl-option value="PRE-CONSTRUCTION">Pre-Construction</sl-option>
         <sl-option value="UNDER-CONSTRUCTION">Under Construction</sl-option>
         <sl-option value="COMPLETED-CONSTRUCTION">Completed</sl-option>
@@ -88,20 +89,20 @@
       <br/>
       <br/>
 
-      <!-- Download button -->
-       <div class="btn-container">
-        <sl-button id="downloadBtn" variant="primary" outline>Download Filtered Data</sl-button>
-      </div>
-
       <!-- close button -->
-      <sl-button slot="footer" variant="primary">
+      <sl-button slot="footer" class="close-button" variant="primary">
         Close
       </sl-button>
     </sl-drawer>
 
+    <!-- Download data button -->
+      <sl-button id="downloadBtn" variant="plain" outline>
+        Download Filtered Data
+      </sl-button>
+
+    <!-- open map filter -->
     <sl-button class="openDrawer" variant="plain" outline>
-      <sl-icon slot="suffix" name="funnel"></sl-icon>
-      Map layers & filters
+      Open map filters
     </sl-button>
 
      <!-- Splash Page as a Dialog -->
@@ -119,6 +120,33 @@
       <sl-checkbox id="dontShowCheckbox">Don't show this again</sl-checkbox>
       <sl-button slot="footer" variant="primary" id="closeBtn">Got it!</sl-button>
     </sl-dialog> -->
+
+    <!-- map legend -->
+    <div id="legend-pre-construction" class="legend">
+      <span class="legend-color" style="background-color: #CC5500"></span>
+      <span>Pre-Construction</span>
+    </div>
+    
+    <div id="legend-under-construction" class="legend">
+      <span class="legend-color" style="background-color: #009f00"></span>
+      <span>Under Construction</span>
+    </div>
+    
+    <div id="legend-construction-complete" class="legend">
+      <span class="legend-color" style="background-color: #00009f"></span>
+      <span>Construction Complete</span>
+    </div>
+    
+    <div id="legend-all" class="legend">
+      <span class="legend-color" style="background-color: #CC5500"></span>
+      <span>Pre-Construction</span>
+      <br>
+      <span class="legend-color" style="background-color: #009f00"></span>
+      <span>Under Construction</span>
+      <br>
+      <span class="legend-color" style="background-color: #00009f"></span>
+      <span>Construction Complete</span>
+    </div>
 
     <!-- logos -->
     <div><img src="assets/arc_logo.png" alt="Logo" class="arc-logo"></div>
