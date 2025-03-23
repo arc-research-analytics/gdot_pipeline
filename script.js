@@ -526,7 +526,7 @@ const updateMapLayer = () => {
   if (!map.isStyleLoaded()) {
     setTimeout(() => {
       updateMapLayer();
-    }, 5);
+    }, 100);
     return;
   }
 
