@@ -361,8 +361,8 @@ const filterAndUpdateTable = () => {
   updateTableFromMapExtent(visibleDescriptions);
 };
 
-// Filter and update table on load
-map.on("load", () => {
+// Filter and update table on load after waiting 200 ms
+map.on("idle", () => {
   filterAndUpdateTable(); // Filter and update on initial load
 });
 
@@ -551,7 +551,7 @@ const updateMapLayer = () => {
 };
 
 // on load, update the map layer on initial load
-map.on("load", () => {
+map.on("idle", () => {
   updateMapLayer(); // Filter and update on initial load
 });
 
