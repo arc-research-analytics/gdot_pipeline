@@ -1,5 +1,6 @@
 // swap out with MAPBOX_API_KEY_PLACEHOLDER before deployment
-mapboxgl.accessToken = "MAPBOX_API_KEY_PLACEHOLDER";
+mapboxgl.accessToken =
+  "pk.eyJ1Ijoid3dyaWdodDIxIiwiYSI6ImNtN2MwdjdtYjBqeTUycnBwbHI1cWJrZmIifQ.BztD8jx6SLKxOtjK1ae4kg";
 
 // define map bounds
 const bounds = [
