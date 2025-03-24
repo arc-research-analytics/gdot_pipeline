@@ -651,9 +651,6 @@ document.addEventListener("DOMContentLoaded", () => {
         filterAndUpdateTable();
       }, 100);
 
-      const selectedValue = statusSelect.value;
-      console.log("Selected value:", selectedValue);
-
       // Show or hide the legends based on the selected value
       if (selectedValue === "PRE-CONSTRUCTION") {
         legendPreConstruction.style.display = "block";
