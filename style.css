@@ -132,15 +132,18 @@ width: 100%;
   left: 15px;
   background-color: #efefef;
   opacity: var(--opacity-value);
-  max-height: 100%;
   overflow: hidden;
   border-radius: 10px;
   border: 1px solid black;
 }
 
+.map-overlay p#dynamic-table-info{
+  padding: 10px;
+}
+
 .map-overlay .listing {
-  overflow: auto;
-  max-height: 100%;
+  overflow-y: auto;
+  max-height: calc(100% - 40px); 
 }
 
 .map-overlay .listing > * {
