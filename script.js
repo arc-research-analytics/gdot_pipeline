@@ -65,27 +65,6 @@ map.on("load", () => {
     }
   }
 
-  // // fetch to add county outlines
-  // fetch("data/counties/GA_counties_simp.geojson")
-  //   .then((response) => response.json())
-  //   .then((data) => {
-  //     map.addLayer({
-  //       id: "ga-counties-outline",
-  //       type: "line",
-  //       source: {
-  //         type: "geojson",
-  //         data: data,
-  //       },
-  //       minzoom: 8.5,
-  //       maxzoom: 15,
-  //       paint: {
-  //         "line-color": "#525252",
-  //         "line-width": 1, // Fill opacity
-  //         "line-dasharray": [2, 2],
-  //       },
-  //     });
-  //   });
-
   // fetch to add county labels
   fetch("data/counties/GA_counties_centroids.geojson")
     .then((response) => response.json())
@@ -497,9 +476,12 @@ function updateButtonText() {
   const button = document.querySelector(".openDrawer");
 
   if (window.innerWidth <= 768) {
-    button.textContent = "Filters";
+    button.innerHTML = `<sl-icon slot="suffix" name="filter-circle"></sl-icon>`;
   } else {
-    button.textContent = "Open map filters";
+    button.innerHTML = `
+      <sl-icon slot="suffix" name="filter-circle"></sl-icon>
+      Map filters & metrics
+    `;
   }
 }
 
@@ -638,6 +620,11 @@ document.addEventListener("DOMContentLoaded", () => {
   );
   const legendAll = document.getElementById("legend-all");
 
+  // if window.innerWidth is less than 768, remove downloadBtn
+  if (window.innerWidth < 768) {
+    downloadBtn.remove();
+  }
+
   // ✅ Show Pre-Construction legend by default on load
   legendPreConstruction.style.display = "block";
   legendUnderConstruction.style.display = "none";
@@ -652,22 +639,22 @@ document.addEventListener("DOMContentLoaded", () => {
       }, 100);
 
       // Show or hide the legends based on the selected value
-      if (selectedValue === "PRE-CONSTRUCTION") {
+      if (statusSelect.value === "PRE-CONSTRUCTION") {
         legendPreConstruction.style.display = "block";
         legendUnderConstruction.style.display = "none";
         legendConstructionComplete.style.display = "none";
         legendAll.style.display = "none";
-      } else if (selectedValue === "UNDER-CONSTRUCTION") {
+      } else if (statusSelect.value === "UNDER-CONSTRUCTION") {
         legendPreConstruction.style.display = "none";
         legendUnderConstruction.style.display = "block";
         legendConstructionComplete.style.display = "none";
         legendAll.style.display = "none";
-      } else if (selectedValue === "COMPLETED-CONSTRUCTION") {
+      } else if (statusSelect.value === "COMPLETED-CONSTRUCTION") {
         legendPreConstruction.style.display = "none";
         legendUnderConstruction.style.display = "none";
         legendConstructionComplete.style.display = "block";
         legendAll.style.display = "none";
-      } else if (selectedValue === "ALL") {
+      } else if (statusSelect.value === "ALL") {
         legendPreConstruction.style.display = "none";
         legendUnderConstruction.style.display = "none";
         legendConstructionComplete.style.display = "none";
