@@ -27,6 +27,9 @@
     <!-- shoelace for UI components -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.0/cdn/themes/light.css" />
     <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.0/cdn/shoelace-autoloader.js"></script>
+
+    <!-- Google Material Icons -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=map_search" />
     
 
   </head>
@@ -89,6 +92,21 @@
       <br/>
       <br/>
       <br/>
+      <br/>
+      <br/>
+      <br/>
+
+      <!-- buttons for Carto base map selection -->
+      <div class="radio-container">
+        <sl-radio-group label="Select a basemap:" name="a" value="light">
+          <sl-radio-button value="dark">
+            <sl-icon name="moon"></sl-icon>
+          </sl-radio-button>
+          <sl-radio-button value="light">
+            <sl-icon name="brightness-high"></sl-icon>
+          </sl-radio-button>
+        </sl-radio-group>
+      </div>
 
       <!-- close button -->
       <sl-button slot="footer" class="close-button" variant="primary">
