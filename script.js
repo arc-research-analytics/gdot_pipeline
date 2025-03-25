@@ -14,10 +14,10 @@ const map = new mapboxgl.Map({
   style: {
     version: 8,
     sources: {
-      "carto-voyager": {
+      carto: {
         type: "raster",
         tiles: [
-          "https://a.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
+          "https://a.basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}{r}.png",
         ],
         tileSize: 256,
         attribution:
@@ -27,9 +27,9 @@ const map = new mapboxgl.Map({
     glyphs: "mapbox://fonts/mapbox/{fontstack}/{range}.pbf",
     layers: [
       {
-        id: "carto-voyager-layer",
+        id: "carto-layer",
         type: "raster",
-        source: "carto-voyager",
+        source: "carto",
         minzoom: 0,
         maxzoom: 20,
       },
@@ -476,11 +476,11 @@ function updateButtonText() {
   const button = document.querySelector(".openDrawer");
 
   if (window.innerWidth <= 768) {
-    button.innerHTML = `<sl-icon slot="suffix" name="filter-circle"></sl-icon>`;
+    button.innerHTML = `<span class="material-symbols-outlined">map_search</span>`;
   } else {
     button.innerHTML = `
-      <sl-icon slot="suffix" name="filter-circle"></sl-icon>
       Map filters & metrics
+      <span class="material-symbols-outlined">map_search</span>
     `;
   }
 }
@@ -619,6 +619,7 @@ document.addEventListener("DOMContentLoaded", () => {
     "legend-construction-complete"
   );
   const legendAll = document.getElementById("legend-all");
+  const radioGroup = document.querySelector("sl-radio-group");
 
   // if window.innerWidth is less than 768, remove downloadBtn
   if (window.innerWidth < 768) {
@@ -694,4 +695,18 @@ document.addEventListener("DOMContentLoaded", () => {
   } else {
     console.error("drawer or closeButton not found at DOMContentLoaded.");
   }
+
+  // Attach event listener to radio group to change basemap
+  radioGroup.addEventListener("sl-change", (event) => {
+    const selectedValue = event.target.value;
+
+    // Define the new tile URL based on selection
+    const newTileUrl =
+      selectedValue === "dark"
+        ? "https://a.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png"
+        : "https://a.basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}{r}.png";
+
+    // ✅ Update the tile source with new URL
+    map.getSource("carto").setTiles([newTileUrl]);
+  });
 });
