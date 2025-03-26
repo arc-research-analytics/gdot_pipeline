@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <title>GDOT Projects</title>
-    <link rel="icon" type="image/png" sizes="32x32" href="assets/construction.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/road.png">
     <meta
       name="viewport"
       content="initial-scale=1,maximum-scale=1,user-scalable=no"
@@ -56,7 +56,12 @@
     </header>    
 
     <!-- shoelace drawer for filters -->
-    <sl-drawer label="Filter map by:" placement="start" class="drawer-placement">
+    <sl-drawer label="" placement="start" class="drawer-placement">
+
+      <!-- insert div with text -->
+      <div id="drawer-header" style="text-align: center; margin-top: 0px;">
+        <h3>Filters</h3>
+      </div>
 
       <!-- dropdown for map layers -->
       <sl-select id="statusSelect" label="Construction Status" value="PRE-CONSTRUCTION">
@@ -89,6 +94,17 @@
       </sl-select>
 
       <!-- vertical spacing -->
+      <br/>
+
+      <!-- Add a div for displaying summary stats inside the drawer -->
+      <div id="summary-stats" style="text-align: center; margin-top: 20px;">
+        <h3>Filtered Project Summary</h3>
+        <p><strong>Total Projects:</strong> <span id="total-projects">$0</span></p>
+        <p><strong>Total Cost:</strong> <span id="total-cost">$0</span></p>
+        <p><strong>Average Cost:</strong> <span id="average-cost">$0</span></p>
+      </div>
+
+      <br/>
       <br/>
       <br/>
       <br/>
