@@ -88,15 +88,16 @@ map.on("load", () => {
         minzoom: 8.5,
         maxzoom: 15,
         layout: {
-          "text-field": "{ShortLabel} County",
+          "text-field": "{ShortLabel}",
           "text-size": 14,
-          "text-allow-overlap": true,
-          "text-font": ["Roboto Bold"],
+          "text-allow-overlap": false,
+          "text-font": ["Roboto Bold Italic"],
+          "text-transform": "uppercase",
         },
         paint: {
           "text-color": "#000000",
           "text-halo-color": "#FFFFFF",
-          "text-halo-width": 0.5,
+          "text-halo-width": 0.75,
         },
       });
     });
@@ -123,7 +124,7 @@ map.on("load", () => {
         paint: {
           "text-color": "#f0f0f0",
           "text-halo-color": "#000000",
-          "text-halo-width": 1,
+          "text-halo-width": 2,
         },
       });
     });
