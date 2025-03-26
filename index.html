@@ -64,7 +64,7 @@
       </div>
 
       <!-- dropdown for map layers -->
-      <sl-select id="statusSelect" label="Construction Status" value="PRE-CONSTRUCTION">
+      <sl-select id="statusSelect" label="By Construction Status:" value="PRE-CONSTRUCTION">
         <sl-option value="ALL">All</sl-option>
         <sl-option value="PRE-CONSTRUCTION">Pre-Construction</sl-option>
         <sl-option value="UNDER-CONSTRUCTION">Under Construction</sl-option>
@@ -73,10 +73,8 @@
       
       <!-- vertical spacing -->
       <br/>
-      <br/>
-      <br/>
 
-      <sl-select id="districtSelect" label="Congressional District" value=10>
+      <sl-select id="districtSelect" label="By Congressional District:" value=10>
         <sl-option value=1>1</sl-option>
         <sl-option value=2>2</sl-option>
         <sl-option value=3>3</sl-option>
@@ -95,35 +93,29 @@
 
       <!-- vertical spacing -->
       <br/>
+      <br/>
 
-      <!-- Add a card for displaying summary stats inside the drawer -->
-      <sl-card class="summary-stats">
-        <div slot="header" style="text-align: center; margin-left: 6px; font-size: 18px; font-weight: 800;">
-          Filtered Project Summary
-        </div>
-        <p><strong>Total Projects:</strong> <span id="total-projects">$0</span></p>
-        <p><strong>Total Cost:</strong> <span id="total-cost">$0</span></p>
-        <p><strong>Average Cost:</strong> <span id="average-cost">$0</span></p>
-      </sl-card>
+      <!-- Display summary stats inside the drawer -->
+      <div id="drawer-header" style="text-align: center; margin-top: 0px;">
+        <h3>Filtered Project Metrics</h3>
+      </div>
+      <div slot="header" style="text-align: center; margin-left: 6px; font-size: 18px; font-weight: 800;">
+        Filtered Project Summary
+      </div>
+      <p><strong>Total Projects:</strong> <span id="total-projects">$0</span></p>
+      <p><strong>Total Cost:</strong> <span id="total-cost">$0</span></p>
+      <p><strong>Average Cost:</strong> <span id="average-cost">$0</span></p>
+      <p style="font-size: 14px;"><em>Download filtered data as a CSV using the button in the lower right corner of the map.</em></p>
 
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
       <br/>
       <br/>
 
       <!-- buttons for Carto base map selection -->
+      <div id="drawer-header" style="text-align: center; margin-top: 0px;">
+        <h3>Basemap Theme</h3>
+      </div>
       <div class="radio-container">
-        <sl-radio-group label="Select a basemap:" name="a" value="light">
+        <sl-radio-group label="" name="a" value="light">
           <sl-radio-button value="dark">
             <sl-icon name="moon"></sl-icon>
           </sl-radio-button>
