@@ -528,12 +528,11 @@ const updateSummaryStats = (summaryData) => {
   // Filter the summaryData based on the selected filters
   const filteredData = summaryData.find(
     (item) =>
-      (selectedStatus === "ALL" ||
-        item.CONSTRUCTION_STATUS_DERIVED === selectedStatus) &&
+      item.CONSTRUCTION_STATUS_DERIVED === selectedStatus &&
       item.DISTRICT === selectedDistrict
   );
 
-  // If no data found, reset to 0
+  // If no matching data is found, reset to 0
   if (!filteredData) {
     document.getElementById("total-projects").textContent = "0";
     document.getElementById("total-cost").textContent = "$0";
@@ -541,54 +540,22 @@ const updateSummaryStats = (summaryData) => {
     return;
   }
 
-  // Handle "ALL" status aggregation for the selected district
-  if (selectedStatus === "ALL") {
-    // Sum total_projects and total_cost, calculate weighted average cost
-    const totalProjects = filteredData.reduce(
-      (sum, item) => sum + item.total_projects,
-      0
-    );
-    const totalCost = filteredData.reduce(
-      (sum, item) => sum + item.total_cost,
-      0
-    );
-    const averageCost = totalCost / totalProjects || 0; // Avoid division by zero
+  console.log("filteredData", filteredData);
 
-    // Update summary stats for "ALL"
-    document.getElementById("total-projects").textContent =
-      totalProjects.toLocaleString();
-    document.getElementById(
-      "total-cost"
-    ).textContent = `$${totalCost.toLocaleString(undefined, {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    })}`;
-    document.getElementById(
-      "average-cost"
-    ).textContent = `$${averageCost.toLocaleString(undefined, {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    })}`;
-    return;
-  }
-
-  // If not "ALL", update with the single matching record
-  const item = filteredData[0];
-
-  // Update summary stats in the DOM
+  // Update summary stats in the DOM with the matched data
   document.getElementById("total-projects").textContent =
     filteredData.total_projects.toLocaleString();
   document.getElementById(
     "total-cost"
   ).textContent = `$${filteredData.total_cost.toLocaleString(undefined, {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
   })}`;
   document.getElementById(
     "average-cost"
   ).textContent = `$${filteredData.average_cost.toLocaleString(undefined, {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
   })}`;
 };
 
