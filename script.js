@@ -53,49 +53,8 @@ map.addControl(scale);
 let projectInfo = [];
 let hoveredProjectId = null;
 
-// Load the counties AFTER map style is loaded
+// Load map and layers
 map.on("load", () => {
-  // find the first symbol layer in the style (usually the labels)
-  const layers = map.getStyle().layers;
-  let firstSymbolId;
-  for (const layer of layers) {
-    if (layer.type === "symbol") {
-      firstSymbolId = layer.id;
-      break;
-    }
-  }
-
-  // fetch to add county labels
-  fetch("data/counties/GA_counties_centroids.geojson")
-    .then((response) => response.json())
-    .then((data) => {
-      map.addLayer(
-        {
-          id: "county-labels",
-          type: "symbol",
-          source: {
-            type: "geojson",
-            data: data,
-          },
-          slot: "top",
-          minzoom: 8.5,
-          maxzoom: 15,
-          layout: {
-            "text-field": "{ShortLabel} County",
-            "text-size": 14,
-            "text-allow-overlap": true,
-            "text-font": ["Roboto Bold"],
-          },
-          paint: {
-            "text-color": "#000000",
-            "text-halo-color": "#FFFFFF",
-            "text-halo-width": 0.5,
-          },
-        },
-        firstSymbolId
-      );
-    });
-
   // fetch to add Congressional Districts
   fetch("data/congressional_districts/cdistricts.geojson")
     .then((response) => response.json())
@@ -115,35 +74,58 @@ map.on("load", () => {
       });
     });
 
+  // fetch to add county labels
+  fetch("data/counties/GA_counties_centroids.geojson")
+    .then((response) => response.json())
+    .then((data) => {
+      map.addLayer({
+        id: "county-labels",
+        type: "symbol",
+        source: {
+          type: "geojson",
+          data: data,
+        },
+        minzoom: 8.5,
+        maxzoom: 15,
+        layout: {
+          "text-field": "{ShortLabel} County",
+          "text-size": 14,
+          "text-allow-overlap": true,
+          "text-font": ["Roboto Bold"],
+        },
+        paint: {
+          "text-color": "#000000",
+          "text-halo-color": "#FFFFFF",
+          "text-halo-width": 0.5,
+        },
+      });
+    });
+
   // fetch to add Congressional District labels
   fetch("data/congressional_districts/cdistricts_centroids.geojson")
     .then((response) => response.json())
     .then((data) => {
-      map.addLayer(
-        {
-          id: "cd-labels",
-          type: "symbol",
-          source: {
-            type: "geojson",
-            data: data,
-          },
-          slot: "top",
-          minzoom: 7.5,
-          maxzoom: 15,
-          layout: {
-            "text-field": "District {DISTRICT}",
-            "text-size": 16,
-            "text-allow-overlap": true,
-            "text-font": ["Roboto Bold"],
-          },
-          paint: {
-            "text-color": "#f0f0f0",
-            "text-halo-color": "#000000",
-            "text-halo-width": 1,
-          },
+      map.addLayer({
+        id: "cd-labels",
+        type: "symbol",
+        source: {
+          type: "geojson",
+          data: data,
         },
-        firstSymbolId
-      );
+        minzoom: 7.5,
+        maxzoom: 15,
+        layout: {
+          "text-field": "District {DISTRICT}",
+          "text-size": 16,
+          "text-allow-overlap": true,
+          "text-font": ["Roboto Bold"],
+        },
+        paint: {
+          "text-color": "#f0f0f0",
+          "text-halo-color": "#000000",
+          "text-halo-width": 1,
+        },
+      });
     });
 });
 
@@ -161,7 +143,6 @@ fetch("data/GDOT_export.geojson")
       id: "all-projects",
       type: "line",
       source: "projects-source",
-      slot: "middle",
       paint: {
         "line-color": [
           "match",
@@ -537,6 +518,101 @@ map.on("idle", () => {
   updateMapLayer(); // Filter and update on initial load
 });
 
+// Function to update summary stats based on dropdown selections
+const updateSummaryStats = (summaryData) => {
+  const selectedStatus = document.getElementById("statusSelect").value;
+  const selectedDistrict = parseInt(
+    document.getElementById("districtSelect").value
+  );
+
+  // Filter the summaryData based on the selected filters
+  const filteredData = summaryData.find(
+    (item) =>
+      (selectedStatus === "ALL" ||
+        item.CONSTRUCTION_STATUS_DERIVED === selectedStatus) &&
+      item.DISTRICT === selectedDistrict
+  );
+
+  // If no data found, reset to 0
+  if (!filteredData) {
+    document.getElementById("total-projects").textContent = "0";
+    document.getElementById("total-cost").textContent = "$0";
+    document.getElementById("average-cost").textContent = "$0";
+    return;
+  }
+
+  // Handle "ALL" status aggregation for the selected district
+  if (selectedStatus === "ALL") {
+    // Sum total_projects and total_cost, calculate weighted average cost
+    const totalProjects = filteredData.reduce(
+      (sum, item) => sum + item.total_projects,
+      0
+    );
+    const totalCost = filteredData.reduce(
+      (sum, item) => sum + item.total_cost,
+      0
+    );
+    const averageCost = totalCost / totalProjects || 0; // Avoid division by zero
+
+    // Update summary stats for "ALL"
+    document.getElementById("total-projects").textContent =
+      totalProjects.toLocaleString();
+    document.getElementById(
+      "total-cost"
+    ).textContent = `$${totalCost.toLocaleString(undefined, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}`;
+    document.getElementById(
+      "average-cost"
+    ).textContent = `$${averageCost.toLocaleString(undefined, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}`;
+    return;
+  }
+
+  // If not "ALL", update with the single matching record
+  const item = filteredData[0];
+
+  // Update summary stats in the DOM
+  document.getElementById("total-projects").textContent =
+    filteredData.total_projects.toLocaleString();
+  document.getElementById(
+    "total-cost"
+  ).textContent = `$${filteredData.total_cost.toLocaleString(undefined, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}`;
+  document.getElementById(
+    "average-cost"
+  ).textContent = `$${filteredData.average_cost.toLocaleString(undefined, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}`;
+};
+
+// Function to load the summary data from the static JSON file
+const loadSummaryData = async () => {
+  try {
+    // Fetch the JSON data
+    const response = await fetch("data/summary-stats.json");
+    const summaryData = await response.json();
+
+    // You can store it in a global variable or update the UI
+    return summaryData;
+  } catch (error) {
+    console.error("Error loading summary data:", error);
+  }
+};
+
+// Call loadSummaryData on page load
+window.onload = async () => {
+  const summaryData = await loadSummaryData();
+  // You can now pass summaryData to your functions, for example:
+  updateSummaryStats(summaryData);
+};
+
 // Function to convert GeoJSON to CSV
 const geoJSONToCSV = (geojson) => {
   const features = geojson.features;
@@ -709,4 +785,19 @@ document.addEventListener("DOMContentLoaded", () => {
     // ✅ Update the tile source with new URL
     map.getSource("carto").setTiles([newTileUrl]);
   });
+
+  // Attach event listeners to the dropdowns
+  document
+    .getElementById("statusSelect")
+    .addEventListener("sl-change", async () => {
+      const summaryData = await loadSummaryData(); // Reload data if needed
+      updateSummaryStats(summaryData);
+    });
+
+  document
+    .getElementById("districtSelect")
+    .addEventListener("sl-change", async () => {
+      const summaryData = await loadSummaryData(); // Reload data if needed
+      updateSummaryStats(summaryData);
+    });
 });
