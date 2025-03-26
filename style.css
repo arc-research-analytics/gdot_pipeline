@@ -215,6 +215,27 @@ width: 100%;
   margin-right: 10px;
 }
 
+.summary-stats {
+  max-width: 300px;
+  position: absolute;
+  top: 365px;
+  left: 75px;
+  background-color: #f0f0f0;
+  border: 0.5px solid lightgray;
+  border-radius: 6px;
+  display: block;
+}
+
+.summary-stats [slot='header'] {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.summary-stats h3 {
+  margin: 0;
+}
+
 /* Google Material UI icons */
 .material-symbols-outlined {
   font-variation-settings:
