@@ -56,11 +56,11 @@
     </header>    
 
     <!-- shoelace drawer for filters -->
-    <sl-drawer label="" placement="start" class="drawer-placement">
+    <sl-drawer label="" placement="start" class="drawer-placement" hidden>
 
       <!-- insert div with text -->
       <div id="drawer-header" style="text-align: center; margin-top: 0px;">
-        <h3>Filters</h3>
+        <h3>Map Filters</h3>
       </div>
 
       <!-- dropdown for map layers -->
@@ -98,7 +98,7 @@
 
       <!-- Add a card for displaying summary stats inside the drawer -->
       <sl-card class="summary-stats">
-        <div slot="header">
+        <div slot="header" style="text-align: center; margin-left: 6px; font-size: 18px; font-weight: 800;">
           Filtered Project Summary
         </div>
         <p><strong>Total Projects:</strong> <span id="total-projects">$0</span></p>
