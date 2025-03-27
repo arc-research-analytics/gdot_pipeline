@@ -53,7 +53,7 @@ sl-button.openDrawer {
   
   /* Positioning */
   position: absolute;
-  bottom: 80px;
+  bottom: 88px;
   left: 15px;
   z-index: 99;
 }
