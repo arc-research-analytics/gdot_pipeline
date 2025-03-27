@@ -72,10 +72,10 @@ sl-button.openDrawer::part(base):hover {
   font-size: 20px;
   border-radius: 10px;
   border: none;
-  width: 200px;
+  width: 80px;
   transition: var(--sl-transition-medium) background-color ease, var(--sl-transition-medium) border ease;
   position: absolute;
-  bottom: 100px;
+  top: 65px;
   right: 15px;
 }
 
@@ -197,7 +197,7 @@ width: 100%;
 
 .legend {
   position: absolute;
-  top: 65px;
+  bottom: 100px;
   right: 15px;
   background-color: #f0f0f0;
   padding: 10px;
