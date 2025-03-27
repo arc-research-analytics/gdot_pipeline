@@ -131,15 +131,19 @@
     </sl-drawer>
 
     <!-- Download data button -->
+    <sl-tooltip content="Download the source data as a CSV.">
       <sl-button id="downloadBtn" variant="plain" outline>
-        Download the Data
+        <sl-icon name="download" style="font-size: 18px; margin-top: 10px;"></sl-icon>
       </sl-button>
+    </sl-tooltip>
 
     <!-- open map filter -->
-    <sl-button class="openDrawer" variant="plain" outline>
-      <sl-icon slot="prefix" name="filter-circle"></sl-icon>
-      Map filters & metrics
-    </sl-button>
+    <sl-tooltip content="Open side panel for map filters and metrics.">
+      <sl-button class="openDrawer" variant="plain" outline>
+        <sl-icon slot="prefix" name="filter-circle"></sl-icon>
+        Map filters & metrics
+      </sl-button>
+    </sl-tooltip>
 
      <!-- Splash Page as a Dialog --> 
      <!-- <sl-dialog id="splashDialog" label="Welcome to the GDOT Projects Map!" open>
