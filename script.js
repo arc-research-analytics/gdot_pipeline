@@ -55,79 +55,75 @@ let hoveredProjectId = null;
 
 // Load map and layers
 map.on("load", () => {
-  // fetch to add Congressional Districts
-  fetch("data/congressional_districts/cdistricts.geojson")
-    .then((response) => response.json())
-    .then((data) => {
-      map.addLayer({
-        id: "ga-congressional-districts",
-        type: "line",
-        source: {
-          type: "geojson",
-          data: data,
-        },
-        slot: "bottom",
-        paint: {
-          "line-color": "#525252",
-          "line-width": 2,
-        },
-      });
+  Promise.all([
+    fetch("data/congressional_districts/cdistricts.geojson").then((response) =>
+      response.json()
+    ),
+    fetch("data/counties/GA_counties_centroids.geojson").then((response) =>
+      response.json()
+    ),
+    fetch("data/congressional_districts/cdistricts_centroids.geojson").then(
+      (response) => response.json()
+    ),
+  ]).then(([cdData, countyData, cdLabelData]) => {
+    map.addLayer({
+      id: "ga-congressional-districts",
+      type: "line",
+      source: {
+        type: "geojson",
+        data: cdData,
+      },
+      paint: {
+        "line-color": "#525252",
+        "line-width": 2,
+      },
     });
 
-  // fetch to add county labels
-  fetch("data/counties/GA_counties_centroids.geojson")
-    .then((response) => response.json())
-    .then((data) => {
-      map.addLayer({
-        id: "county-labels",
-        type: "symbol",
-        source: {
-          type: "geojson",
-          data: data,
-        },
-        minzoom: 8.5,
-        maxzoom: 15,
-        layout: {
-          "text-field": "{ShortLabel}",
-          "text-size": 14,
-          "text-allow-overlap": false,
-          "text-font": ["Roboto Bold Italic"],
-          "text-transform": "uppercase",
-        },
-        paint: {
-          "text-color": "#000000",
-          "text-halo-color": "#FFFFFF",
-          "text-halo-width": 0.75,
-        },
-      });
+    map.addLayer({
+      id: "county-labels",
+      type: "symbol",
+      source: {
+        type: "geojson",
+        data: countyData,
+      },
+      minzoom: 8.5,
+      maxzoom: 15,
+      layout: {
+        "text-field": "{ShortLabel}",
+        "text-size": 14,
+        "text-allow-overlap": false,
+        "text-font": ["Roboto Bold Italic"],
+        "text-transform": "uppercase",
+      },
+      paint: {
+        "text-color": "#000000",
+        "text-halo-color": "#FFFFFF",
+        "text-halo-width": 0.75,
+      },
     });
 
-  // fetch to add Congressional District labels
-  fetch("data/congressional_districts/cdistricts_centroids.geojson")
-    .then((response) => response.json())
-    .then((data) => {
-      map.addLayer({
-        id: "cd-labels",
-        type: "symbol",
-        source: {
-          type: "geojson",
-          data: data,
-        },
-        minzoom: 7.5,
-        maxzoom: 15,
-        layout: {
-          "text-field": "District {DISTRICT}",
-          "text-size": 16,
-          "text-allow-overlap": true,
-          "text-font": ["Roboto Bold"],
-        },
-        paint: {
-          "text-color": "#f0f0f0",
-          "text-halo-color": "#000000",
-          "text-halo-width": 2,
-        },
-      });
+    map.addLayer({
+      id: "cd-labels",
+      type: "symbol",
+      source: {
+        type: "geojson",
+        data: cdLabelData,
+      },
+      minzoom: 7.5,
+      maxzoom: 15,
+      layout: {
+        "text-field": "District {DISTRICT}",
+        "text-size": 16,
+        "text-allow-overlap": true,
+        "text-font": ["Roboto Bold"],
+      },
+      paint: {
+        "text-color": "#f0f0f0",
+        "text-halo-color": "#000000",
+        "text-halo-width": 2,
+      },
     });
+  });
 });
 
 // Load the projects, create the filter and table ---------v-----------
@@ -581,70 +577,6 @@ window.onload = async () => {
   updateSummaryStats(summaryData);
 };
 
-// Function to convert GeoJSON to CSV
-const geoJSONToCSV = (geojson) => {
-  const features = geojson.features;
-  if (features.length === 0) {
-    console.warn("No features found in the filtered data.");
-    return null;
-  }
-
-  const headers = Object.keys(features[0].properties);
-  const csvRows = [];
-  csvRows.push(headers.join(",")); // Add header row
-
-  features.forEach((feature) => {
-    const row = headers.map((header) => {
-      let value = feature.properties[header];
-      // Escape commas and quotes if necessary
-      if (typeof value === "string") {
-        value = `"${value.replace(/"/g, '""')}"`;
-      }
-      return value;
-    });
-    csvRows.push(row.join(","));
-  });
-
-  return csvRows.join("\n");
-};
-
-// Function to download filtered data as CSV
-const downloadFilteredData = async () => {
-  // Get features from the filtered "all-projects" layer
-  const features = map.queryRenderedFeatures({
-    layers: ["all-projects"],
-  });
-
-  if (!features || features.length === 0) {
-    alert("No filtered data available to download.");
-    return;
-  }
-
-  // Create a GeoJSON feature collection from the filtered features
-  const filteredGeoJSON = {
-    type: "FeatureCollection",
-    features: features,
-  };
-
-  // Convert filtered GeoJSON to CSV
-  const csvData = geoJSONToCSV(filteredGeoJSON);
-
-  if (!csvData) {
-    alert("No data available to export.");
-    return;
-  }
-
-  // Create a Blob and download the CSV
-  const blob = new Blob([csvData], { type: "text/csv;charset=utf-8;" });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.setAttribute("href", url);
-  link.setAttribute("download", "GDOT_projects_export.csv");
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-};
-
 // Run this once on page load to apply the default filter
 document.addEventListener("DOMContentLoaded", () => {
   const statusSelect = document.getElementById("statusSelect");
@@ -723,9 +655,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Attach event listener to download button
   if (downloadBtn) {
-    downloadBtn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      downloadFilteredData();
+    downloadBtn.addEventListener("click", () => {
+      const csvFile = "GDOT_export.csv";
+      const link = document.createElement("a");
+      link.href = csvFile;
+      link.download = csvFile;
+      link.click();
     });
   } else {
     console.error("downloadBtn element not found at DOMContentLoaded.");
