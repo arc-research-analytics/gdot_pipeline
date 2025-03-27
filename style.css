@@ -279,7 +279,8 @@ width: 100%;
   .map-overlay,
   .header-logo,
   .mapboxgl-ctrl-geocoder,
-  .gdot-logo
+  .gdot-logo,
+  .arc-logo,
   #downloadBtn {
       display: none !important;  /* Hides elements on smaller screens */
   }
