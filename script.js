@@ -445,8 +445,10 @@ fetch("data/current_date.txt")
     document.getElementById("last-updated").style.bottom = "9px";
     document.getElementById("last-updated").style.left = "100px";
     document.getElementById("last-updated").style.fontSize = "15px";
-    document.getElementById("last-updated").style.color = "#525252";
-    document.getElementById("last-updated").style.opacity = 0.6;
+    document.getElementById("last-updated").style.color = "#252525";
+    document.getElementById("last-updated").style.opacity = 0.8;
+    document.getElementById("last-updated").style.textShadow =
+      "-1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff";
   });
 
 // modify the filter button based on screen size
