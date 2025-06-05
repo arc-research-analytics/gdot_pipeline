@@ -1,0 +1,362 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Roboto', sans-serif;
+}
+
+header {
+  background-color: #005495;
+  color: #fff;
+  text-align: left;
+  padding: 10px;
+  font-size: 25px;
+  font-weight: bold;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  opacity: .9;
+}
+
+.arc-logo {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  transform: translateY(-50%);
+  /* Ensures perfect vertical centering */
+  height: 45px;
+  /* Adjust as needed */
+  width: auto;
+  /* Maintains aspect ratio */
+  z-index: 2;
+}
+
+.gdot-logo {
+  position: absolute;
+  right: 140px;
+  bottom: 12px;
+  transform: translateY(-50%);
+  /* Ensures perfect vertical centering */
+  height: 45px;
+  /* Adjust as needed */
+  width: auto;
+  /* Maintains aspect ratio */
+  z-index: 2;
+}
+
+/* Base styling for the open drawer button */
+sl-button.openDrawer {
+  position: absolute;
+  bottom: 88px;
+  left: 15px;
+  z-index: 99;
+  /* Remove any background or border from the host element */
+  background: transparent;
+  border: none;
+}
+
+/* Target the shadow parts of the button to change border-radius and remove background */
+sl-button.openDrawer::part(base) {
+  border-radius: var(--border-radius);
+  background-color: #efefef;
+  opacity: var(--opacity-value);
+  color: black;
+  font-size: 16px;
+  width: 105px;
+  transition: var(--sl-transition-medium) background-color ease, var(--sl-transition-medium) border ease;
+  border: 1px solid black;
+  overflow: hidden;
+}
+
+/* Style the button part to match the base part */
+sl-button.openDrawer::part(button) {
+  border-radius: var(--border-radius);
+  width: 100%;
+  height: 100%;
+}
+
+/* Hover effect: blue background, white text */
+sl-button.openDrawer::part(base):hover {
+  background-color: #005495;
+  color: white;
+  border: 1px solid white;
+}
+
+/* Base styling for the download button */
+#downloadBtn {
+  position: absolute;
+  top: 65px;
+  right: 15px;
+  /* Remove any background or border from the host element */
+  background: transparent;
+  border: none;
+}
+
+/* Target the shadow parts of the download button */
+#downloadBtn::part(base) {
+  border-radius: var(--border-radius);
+  background-color: #efefef;
+  opacity: var(--opacity-value);
+  color: black;
+  font-size: 20px;
+  width: 80px;
+  transition: var(--sl-transition-medium) background-color ease, var(--sl-transition-medium) border ease;
+  border: 1px solid black;
+  overflow: hidden;
+}
+
+/* Style the button part to match the base part */
+#downloadBtn::part(button) {
+  border-radius: var(--border-radius);
+  width: 100%;
+  height: 100%;
+}
+
+#downloadBtn::part(base):hover {
+  background-color: #005495;
+  color: white;
+  border: 1px solid white;
+}
+
+#geocoder-container {
+  position: absolute;
+  top: 0.5px;
+  right: 0px !important;
+  z-index: 99 !important;
+}
+
+#geocoder-container:hover {
+  opacity: 1 !important;
+}
+
+#geocoder-container .mapboxgl-ctrl-geocoder input {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+
+#map {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+}
+
+/* set global styling variables */
+:root {
+  --opacity-value: 0.90;
+  --topline-margin: 25px;
+  --border-radius: 8px;
+}
+
+/* place the geocoder at the top left of the screen */
+.mapboxgl-ctrl-geocoder {
+  width: 300px !important;
+  margin-top: 6px !important;
+  margin-right: 20px !important;
+  opacity: var(--opacity-value);
+  z-index: 999 !important;
+}
+
+.map-overlay {
+  position: absolute;
+  width: 350px;
+  top: 75px;
+  bottom: 150px;
+  left: 15px;
+  background-color: #efefef;
+  opacity: var(--opacity-value);
+  overflow: hidden;
+  border-radius: 10px;
+  border: 1px solid black;
+}
+
+.map-overlay p#dynamic-table-info {
+  padding: 10px;
+}
+
+.map-overlay .listing {
+  overflow-y: auto;
+  max-height: calc(100% - 40px);
+}
+
+.map-overlay .listing>* {
+  display: block;
+  padding: 5px 10px;
+  margin: 0;
+}
+
+.map-overlay .listing a {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  color: #404;
+  text-decoration: none;
+}
+
+.map-overlay .listing a:last-child {
+  border: none;
+}
+
+.map-overlay .listing a:hover {
+  background: #f0f0f0;
+}
+
+.project-link {
+  font-size: 15px;
+  color: #000 !important;
+}
+
+.project-link:hover {
+  color: #23527c !important;
+  text-decoration: underline !important;
+}
+
+#feature-filter+span {
+  position: absolute;
+  right: 20px;
+  color: darkgrey;
+  top: 15px;
+}
+
+#dynamic-table-info {
+  font-style: italic;
+  font-weight: 400;
+  font-size: 16px;
+  padding: 8px;
+  text-align: center;
+  margin: auto;
+  display: block;
+  background-color: #969696;
+}
+
+.legend {
+  position: absolute;
+  bottom: 100px;
+  right: 15px;
+  background-color: #f0f0f0;
+  padding: 10px;
+  border: 1px solid black;
+  border-radius: 6px;
+  display: block;
+  opacity: var(--opacity-value);
+  font: 14px/20px "Helvetica Neue", Arial, Helvetica, sans-serif;
+}
+
+.legend-color {
+  display: inline-block;
+  width: 20px;
+  height: 10px;
+  margin-right: 10px;
+}
+
+#last-updated {
+  position: absolute;
+  bottom: 9px;
+  left: 100px;
+  font-size: 15px;
+  opacity: 0.8;
+  z-index: 1;
+}
+
+.summary-stats {
+  max-width: 300px;
+  position: absolute;
+  top: 365px;
+  left: 84px;
+  background-color: #f0f0f0;
+  border: 0.5px solid lightgray;
+  border-radius: 6px;
+  display: block;
+}
+
+.summary-stats [slot='header'] {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.summary-stats h3 {
+  margin: 0;
+}
+
+/* Google Material UI icons */
+.material-symbols-outlined {
+  font-variation-settings:
+    'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24;
+  vertical-align: middle;
+  /* Align icon with text */
+  margin-left: 4px;
+  /* Optional: Add space between text and icon */
+  line-height: 1;
+  /* Ensures consistent alignment */
+}
+
+/* Target the theme toggle radio group specifically */
+.radio-container-theme sl-radio-group {
+  border: none;
+  border-radius: 10px;
+  padding: 0px;
+  background-color: #efefef;
+  position: absolute;
+  bottom: 150px;
+  left: 15px;
+  opacity: var(--opacity-value);
+}
+
+/* Using Shoelace CSS custom properties for the theme toggle */
+.radio-container-theme sl-radio-group {
+  --sl-input-border-color: black;
+  --sl-input-border-width: 2px;
+  --sl-input-border-radius-medium: 8px;
+  --sl-input-background-color: #f0f5ff;
+}
+
+/* Styling the radio buttons within the theme toggle */
+.radio-container-theme sl-radio-button::part(base) {
+  --sl-color-primary-600: #005495;
+  /* Selected state color */
+}
+
+/* Customizing the theme toggle icons */
+.radio-container-theme sl-radio-button sl-icon {
+  font-size: 1.2rem;
+  /* Make icons larger */
+}
+
+/* Add hover effects just to the theme toggle */
+.radio-container-theme sl-radio-button::part(base):hover {
+  background-color: none;
+}
+
+@media screen and (max-width: 768px) {
+
+  /* reposition Filter button to be centered left-to-right */
+  sl-button.openDrawer {
+    bottom: 75px;
+    width: 75px;
+  }
+
+  /* reposition legend to be top-right */
+  .legend {
+    position: absolute;
+    top: 70px;
+    left: 15px;
+    bottom: auto;
+    right: auto;
+  }
+
+  /* remove the following elements on mobile */
+  .map-overlay,
+  .header-logo,
+  .mapboxgl-ctrl-geocoder,
+  .gdot-logo,
+  .arc-logo,
+  .radio-container-theme,
+  #downloadBtn {
+    display: none !important;
+    /* Hides elements on smaller screens */
+  }
+}

@@ -1,0 +1,19 @@
+{
+"type": "FeatureCollection",
+"name": "aging_centroids",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "Name": "Atlanta Regional Commission" }, "geometry": { "type": "Point", "coordinates": [ -84.419702774906213, 33.963029338554591 ] } },
+{ "type": "Feature", "properties": { "Name": "Coastal Georgia" }, "geometry": { "type": "Point", "coordinates": [ -81.482844628579798, 31.738467165408615 ] } },
+{ "type": "Feature", "properties": { "Name": "CSRA" }, "geometry": { "type": "Point", "coordinates": [ -82.369082446175724, 33.208550983417659 ] } },
+{ "type": "Feature", "properties": { "Name": "Heart of Georgia" }, "geometry": { "type": "Point", "coordinates": [ -82.569495095824507, 32.148038646788763 ] } },
+{ "type": "Feature", "properties": { "Name": "Georgia Mountains" }, "geometry": { "type": "Point", "coordinates": [ -83.660381747305038, 34.547196737448616 ] } },
+{ "type": "Feature", "properties": { "Name": "Middle Georgia" }, "geometry": { "type": "Point", "coordinates": [ -83.560579498364532, 32.815875692458391 ] } },
+{ "type": "Feature", "properties": { "Name": "Northeast Georgia" }, "geometry": { "type": "Point", "coordinates": [ -83.520282738036656, 33.903234514222142 ] } },
+{ "type": "Feature", "properties": { "Name": "Northwest Georgia" }, "geometry": { "type": "Point", "coordinates": [ -85.166336715769063, 34.492160774826232 ] } },
+{ "type": "Feature", "properties": { "Name": "River Valley" }, "geometry": { "type": "Point", "coordinates": [ -84.479196331203212, 32.237476408495922 ] } },
+{ "type": "Feature", "properties": { "Name": "Southern Georgia" }, "geometry": { "type": "Point", "coordinates": [ -82.829047569271708, 31.155047855462744 ] } },
+{ "type": "Feature", "properties": { "Name": "Sowega" }, "geometry": { "type": "Point", "coordinates": [ -84.301334496652217, 31.252994610242268 ] } },
+{ "type": "Feature", "properties": { "Name": "Three Rivers" }, "geometry": { "type": "Point", "coordinates": [ -84.576984784129749, 33.102349399214837 ] } }
+]
+}

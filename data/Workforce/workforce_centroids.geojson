@@ -1,0 +1,26 @@
+{
+"type": "FeatureCollection",
+"name": "workforce_centroids",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "Name": "Atlanta Regional" }, "geometry": { "type": "Point", "coordinates": [ -84.351759946209185, 33.486948215201387 ] } },
+{ "type": "Feature", "properties": { "Name": "City of Atlanta" }, "geometry": { "type": "Point", "coordinates": [ -84.42205833229059, 33.762843390024287 ] } },
+{ "type": "Feature", "properties": { "Name": "Coastal" }, "geometry": { "type": "Point", "coordinates": [ -81.482844613575594, 31.738467172207475 ] } },
+{ "type": "Feature", "properties": { "Name": "Cobb County" }, "geometry": { "type": "Point", "coordinates": [ -84.576676280095896, 33.941476896265542 ] } },
+{ "type": "Feature", "properties": { "Name": "DeKalb County" }, "geometry": { "type": "Point", "coordinates": [ -84.221619655377737, 33.733392036233298 ] } },
+{ "type": "Feature", "properties": { "Name": "East Central Georgia" }, "geometry": { "type": "Point", "coordinates": [ -82.662612081166003, 33.532590380901347 ] } },
+{ "type": "Feature", "properties": { "Name": "Fulton County" }, "geometry": { "type": "Point", "coordinates": [ -84.320774162677878, 34.053611976530036 ] } },
+{ "type": "Feature", "properties": { "Name": "Georgia Mountains" }, "geometry": { "type": "Point", "coordinates": [ -83.840677446593944, 34.568190039920168 ] } },
+{ "type": "Feature", "properties": { "Name": "Heart of Georgia/Altamaha" }, "geometry": { "type": "Point", "coordinates": [ -82.658796619692836, 32.255633482369589 ] } },
+{ "type": "Feature", "properties": { "Name": "Lower Chattahoochee" }, "geometry": { "type": "Point", "coordinates": [ -84.859388417836144, 31.838901710606894 ] } },
+{ "type": "Feature", "properties": { "Name": "Macon-Bibb" }, "geometry": { "type": "Point", "coordinates": [ -83.69776189063991, 32.806591722100102 ] } },
+{ "type": "Feature", "properties": { "Name": "Middle Flint" }, "geometry": { "type": "Point", "coordinates": [ -84.295151908067822, 32.279139519400744 ] } },
+{ "type": "Feature", "properties": { "Name": "Middle Georgia" }, "geometry": { "type": "Point", "coordinates": [ -83.392814429535846, 33.076570485096475 ] } },
+{ "type": "Feature", "properties": { "Name": "Northeast" }, "geometry": { "type": "Point", "coordinates": [ -83.396076929920724, 33.800689087522365 ] } },
+{ "type": "Feature", "properties": { "Name": "Northwest Georgia" }, "geometry": { "type": "Point", "coordinates": [ -85.179885316962412, 34.664868199431403 ] } },
+{ "type": "Feature", "properties": { "Name": "Richmond/Burke" }, "geometry": { "type": "Point", "coordinates": [ -82.021383445155266, 33.145652811927604 ] } },
+{ "type": "Feature", "properties": { "Name": "Southern Georgia" }, "geometry": { "type": "Point", "coordinates": [ -82.829047566061263, 31.155047851744445 ] } },
+{ "type": "Feature", "properties": { "Name": "Southwest Georgia" }, "geometry": { "type": "Point", "coordinates": [ -84.301334514150767, 31.252994615203605 ] } },
+{ "type": "Feature", "properties": { "Name": "West Central" }, "geometry": { "type": "Point", "coordinates": [ -84.953427836130857, 33.108220295136768 ] } }
+]
+}

@@ -1,0 +1,19 @@
+{
+"type": "FeatureCollection",
+"name": "RCs_centroids",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "Name": "Central Savannah River Area" }, "geometry": { "type": "Point", "coordinates": [ -82.465143745852998, 33.266660120729199 ] } },
+{ "type": "Feature", "properties": { "Name": "Coastal" }, "geometry": { "type": "Point", "coordinates": [ -81.497479791712337, 31.852698718856669 ] } },
+{ "type": "Feature", "properties": { "Name": "Heart of Georgia Altamaha" }, "geometry": { "type": "Point", "coordinates": [ -82.569668429216875, 32.148053012113522 ] } },
+{ "type": "Feature", "properties": { "Name": "Middle Georgia" }, "geometry": { "type": "Point", "coordinates": [ -83.560654202499549, 32.816107973108714 ] } },
+{ "type": "Feature", "properties": { "Name": "Northeast Georgia" }, "geometry": { "type": "Point", "coordinates": [ -83.396036087442639, 33.800745249056156 ] } },
+{ "type": "Feature", "properties": { "Name": "Northwest Georgia" }, "geometry": { "type": "Point", "coordinates": [ -84.939952568447694, 34.471201704926209 ] } },
+{ "type": "Feature", "properties": { "Name": "River Valley" }, "geometry": { "type": "Point", "coordinates": [ -84.47919994363653, 32.237493904547925 ] } },
+{ "type": "Feature", "properties": { "Name": "Southern Georgia" }, "geometry": { "type": "Point", "coordinates": [ -82.829108396369307, 31.155063203964662 ] } },
+{ "type": "Feature", "properties": { "Name": "Southwest Georgia" }, "geometry": { "type": "Point", "coordinates": [ -84.301379764386112, 31.253012760331927 ] } },
+{ "type": "Feature", "properties": { "Name": "Three Rivers" }, "geometry": { "type": "Point", "coordinates": [ -84.568071744943467, 33.117766184649547 ] } },
+{ "type": "Feature", "properties": { "Name": "Atlanta Regional Commission" }, "geometry": { "type": "Point", "coordinates": [ -84.341129338139055, 33.842971360048118 ] } },
+{ "type": "Feature", "properties": { "Name": "Georgia Mountains" }, "geometry": { "type": "Point", "coordinates": [ -83.625387579103261, 34.571423416171648 ] } }
+]
+}
