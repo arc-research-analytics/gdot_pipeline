@@ -1,15 +1,20 @@
 // Maps geography types to their corresponding geojson files.
+// Using a base URL approach to handle both local and GitHub Pages deployments
+const BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  ? '../..'  // Local development
+  : '.';     // GitHub Pages or production
+
 const GEOGRAPHY_FILE_PATHS = {
-  Statewide: "../../data/statewide/stateGA.geojson",
-  County: "../../data/counties/ATL_counties.geojson",
-  City: "../../data/cities/ATL_cities.geojson",
-  District: "../../data/congressional_districts/cdistricts.geojson",
+  Statewide: `${BASE_URL}/data/statewide/stateGA.geojson`,
+  County: `${BASE_URL}/data/counties/ATL_counties.geojson`,
+  City: `${BASE_URL}/data/cities/ATL_cities.geojson`,
+  District: `${BASE_URL}/data/congressional_districts/cdistricts.geojson`,
 };
 
 // Maps geography types to their corresponding label (centroid) geojson files
 const GEOGRAPHY_LABEL_FILE_PATHS = {
-  District: "../../data/congressional_districts/cdistricts_centroids.geojson",
-  County: "../../data/counties/ATL_counties_labels.geojson",
+  District: `${BASE_URL}/data/congressional_districts/cdistricts_centroids.geojson`,
+  County: `${BASE_URL}/data/counties/ATL_counties_labels.geojson`,
 };
 
 // Import getBoundaryStyle from ThemeManager 

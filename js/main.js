@@ -5,6 +5,11 @@ import { initThemeManager } from "./modules/ThemeManager.js";
 import { updateProjectLayers } from "./modules/ProjectLoader.js";
 import { applyMapView } from "./modules/MapViewConfig.js";
 
+// Base URL for relative paths (same approach as in other modules)
+const BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  ? '' // Local development - empty because we're already in js/
+  : '.'; // GitHub Pages or production
+
 // temporary location; will move to DOMContentLoaded later
 const map = initializeMap();
 
@@ -100,7 +105,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Attach event listener to download button
   if (downloadBtn) {
     downloadBtn.addEventListener("click", () => {
-      const csvFile = "GDOT_export_joined.csv";
+      const csvFile = `${BASE_URL}/GDOT_export_joined.csv`;
       const link = document.createElement("a");
       link.href = csvFile;
       link.download = "GDOT_export.csv"; // Set the desired file name

@@ -1,9 +1,14 @@
 // Maps geography types to their corresponding project geojson files
+// Using a base URL approach to handle both local and GitHub Pages deployments
+const BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? '../..'  // Local development
+    : '.';     // GitHub Pages or production
+
 const PROJECT_FILE_PATHS = {
-    Statewide: "../../data/projects/statewide_projects.geojson",
-    County: "../../data/projects/county_projects.geojson",
-    City: "../../data/projects/city_projects.geojson",
-    District: "../../data/projects/district_projects.geojson",
+    Statewide: `${BASE_URL}/data/projects/statewide_projects.geojson`,
+    County: `${BASE_URL}/data/projects/county_projects.geojson`,
+    City: `${BASE_URL}/data/projects/city_projects.geojson`,
+    District: `${BASE_URL}/data/projects/district_projects.geojson`,
 };
 
 // Loads project GeoJSON data based on the selected geography type

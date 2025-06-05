@@ -2,6 +2,11 @@
 mapboxgl.accessToken =
   "pk.eyJ1Ijoid3dyaWdodDIxIiwiYSI6ImNtN2MwdjdtYjBqeTUycnBwbHI1cWJrZmIifQ.BztD8jx6SLKxOtjK1ae4kg";
 
+// Base URL for relative paths (same approach as in other modules)
+const BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  ? '../..'  // Local development
+  : '.';     // GitHub Pages or production
+
 // Define private variables for the module
 let mapInstance = null;
 
@@ -69,7 +74,7 @@ export function initializeMap() {
   document.getElementById("geocoder-container").appendChild(geocoderContainer);
 
   // add "Data current as of" text box
-  fetch("data/current_date.txt")
+  fetch(`${BASE_URL}/data/current_date.txt`)
     .then(response => {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
