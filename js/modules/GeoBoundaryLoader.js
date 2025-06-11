@@ -18,7 +18,7 @@ const GEOGRAPHY_LABEL_FILE_PATHS = {
 };
 
 // Import getBoundaryStyle from ThemeManager 
-import { getBoundaryStyle } from './ThemeManager.js';
+import { getBoundaryStyle, getLabelStyle } from './ThemeManager.js';
 // Import map view configuration functions
 import { applyMapView } from './MapViewConfig.js';
 
@@ -77,22 +77,12 @@ function isFeatureSelected(feature, selectedValue, geographyType) {
 
     case "County":
       return (
-        feature.properties.NAME === selectedValue ||
-        feature.properties.name === selectedValue ||
-        feature.properties.Name === selectedValue ||
-        feature.properties.COUNTY === selectedValue ||
-        feature.properties.county === selectedValue ||
-        feature.properties.County === selectedValue
+        feature.properties.NAME === selectedValue
       );
 
     case "City":
       return (
-        feature.properties.NAME === selectedValue ||
-        feature.properties.name === selectedValue ||
-        feature.properties.Name === selectedValue ||
-        feature.properties.CITY === selectedValue ||
-        feature.properties.city === selectedValue ||
-        feature.properties.City === selectedValue
+        feature.properties.NAME === selectedValue
       );
 
     default:
@@ -119,18 +109,12 @@ export async function updateBoundaryLayer(map, geographyType) {
     if (typeof selectedValue === 'string' && selectedValue.includes('_')) {
       selectedValue = selectedValue.replace(/_/g, ' ');
     }
-    console.log(`Selected ${geographyType} value:`, selectedValue);
   }
 
   try {
+
     // Load the GeoJSON data for the selected geography type
     let boundaryData = await loadBoundaryGeoJSON(geographyType);
-
-    // Log the structure of the first feature to understand property names
-    if (boundaryData.features && boundaryData.features.length > 0) {
-      console.log(`Sample feature properties for ${geographyType}:`,
-        boundaryData.features[0].properties);
-    }
 
     // Wait for the map to be loaded
     if (!map.loaded()) {
@@ -143,7 +127,8 @@ export async function updateBoundaryLayer(map, geographyType) {
       unselectedOutlineLayerId,
       selectedLayerId,
       unselectedLayerId,
-      labelLayerId
+      labelLayerId,
+      `${labelLayerId}-unselected`
     ];
 
     layersToRemove.forEach(layerId => {
@@ -186,10 +171,11 @@ export async function updateBoundaryLayer(map, geographyType) {
       data: boundaryData,
     });
 
-    // Get the style for the selected geography type from ThemeManager
-    const style = getBoundaryStyle(geographyType);
+    // Get styles for selected and unselected boundaries
+    const unselectedStyle = getBoundaryStyle(geographyType, false);
+    const selectedStyle = getBoundaryStyle(geographyType, true);
 
-    // Add the unselected features layer with transparent fill and thin black outline
+    // Add the unselected features layer with transparent fill
     map.addLayer({
       id: unselectedLayerId,
       type: "fill",
@@ -201,14 +187,14 @@ export async function updateBoundaryLayer(map, geographyType) {
       filter: ["!=", ["get", "isSelected"], true]
     });
 
-    // Add the selected feature layer with light grey fill
+    // Add the selected feature layer with transparent fill (no fill color)
     map.addLayer({
       id: selectedLayerId,
       type: "fill",
       source: sourceId,
       paint: {
-        "fill-color": "#808080",
-        "fill-opacity": 0.3
+        "fill-color": "#000000",
+        "fill-opacity": 0
       },
       filter: ["==", ["get", "isSelected"], true]
     });
@@ -223,13 +209,13 @@ export async function updateBoundaryLayer(map, geographyType) {
         "line-cap": "round",
       },
       paint: {
-        "line-color": style["line-color"],
-        "line-width": 1
+        "line-color": unselectedStyle["line-color"],
+        "line-width": unselectedStyle["line-width"]
       },
       filter: ["!=", ["get", "isSelected"], true]
     });
 
-    // Add the selected feature outline (slightly thicker)
+    // Add the selected feature outline
     map.addLayer({
       id: selectedOutlineLayerId,
       type: "line",
@@ -239,8 +225,8 @@ export async function updateBoundaryLayer(map, geographyType) {
         "line-cap": "round",
       },
       paint: {
-        "line-color": style["line-color"],
-        "line-width": 2
+        "line-color": selectedStyle["line-color"],
+        "line-width": selectedStyle["line-width"]
       },
       filter: ["==", ["get", "isSelected"], true]
     });
@@ -251,13 +237,73 @@ export async function updateBoundaryLayer(map, geographyType) {
         const labelData = await loadLabelGeoJSON(geographyType);
 
         if (labelData) {
+          // Mark labels as selected based on the selected boundary
+          if (selectedValue) {
+            labelData.features.forEach(feature => {
+              if (geographyType === "District") {
+                const districtNum = parseInt(selectedValue, 10);
+                const featureDistrict = feature.properties.DISTRICT;
+                const isMatching = featureDistrict === districtNum;
+                feature.properties.isSelected = isMatching;
+              } else if (geographyType === "County") {
+                const isSelected =
+                  feature.properties.NAME === selectedValue ||
+                  feature.properties.ShortLabel === selectedValue;
+                feature.properties.isSelected = isSelected;
+              }
+            });
+          } else {
+            // If no value is selected, mark all as unselected
+            labelData.features.forEach(feature => {
+              feature.properties.isSelected = false;
+            });
+          }
+
           // Add label source
           map.addSource(labelSourceId, {
             type: "geojson",
             data: labelData
           });
 
-          // Add label layer
+          // Force a data refresh to ensure labels update correctly
+          // This is a crucial step to make labels refresh properly when changing selection
+          setTimeout(() => {
+            if (map.getSource(labelSourceId)) {
+              map.getSource(labelSourceId).setData(labelData);
+            }
+          }, 50);
+
+          // Get styles for selected and unselected labels
+          const selectedLabelStyle = getLabelStyle(true);
+          const unselectedLabelStyle = getLabelStyle(false);
+
+          // Add label layer for unselected features
+          map.addLayer({
+            id: `${labelLayerId}-unselected`,
+            type: "symbol",
+            source: labelSourceId,
+            layout: {
+              "text-field": geographyType === "District" ?
+                ["concat", "District ", ["to-string", ["get", "DISTRICT"]]] :
+                ["format",
+                  ["upcase", ["get", "ShortLabel"]],
+                  { "font-scale": 0.9, "text-font": ["Roboto Bold Italic", "Arial Unicode MS Bold"] }
+                ],
+              "text-font": ["Roboto Bold", "Arial Unicode MS Bold"],
+              "text-size": 16,
+              "text-allow-overlap": false,
+              "text-ignore-placement": false,
+              "symbol-sort-key": 1, // Lower priority (render under)
+            },
+            paint: {
+              "text-color": unselectedLabelStyle["text-color"],
+              "text-halo-color": unselectedLabelStyle["text-halo-color"],
+              "text-halo-width": unselectedLabelStyle["text-halo-width"]
+            },
+            filter: ["!=", ["get", "isSelected"], true]
+          });
+
+          // Add label layer for selected feature
           map.addLayer({
             id: labelLayerId,
             type: "symbol",
@@ -267,18 +313,20 @@ export async function updateBoundaryLayer(map, geographyType) {
                 ["concat", "District ", ["to-string", ["get", "DISTRICT"]]] :
                 ["format",
                   ["upcase", ["get", "ShortLabel"]],
-                  { "font-scale": 0.8, "text-font": ["Roboto Bold Italic", "Arial Unicode MS Bold"] }
+                  { "font-scale": 0.9, "text-font": ["Roboto Bold Italic", "Arial Unicode MS Bold"] }
                 ],
               "text-font": ["Roboto Bold", "Arial Unicode MS Bold"],
               "text-size": 16,
-              "text-allow-overlap": false,
-              "text-ignore-placement": false,
+              "text-allow-overlap": true,
+              "text-ignore-placement": true,
+              "symbol-sort-key": 0, // Higher priority (render on top)
             },
             paint: {
-              "text-color": "#000000",
-              "text-halo-color": "#ffffff",
-              "text-halo-width": 2
-            }
+              "text-color": selectedLabelStyle["text-color"],
+              "text-halo-color": selectedLabelStyle["text-halo-color"],
+              "text-halo-width": selectedLabelStyle["text-halo-width"]
+            },
+            filter: ["==", ["get", "isSelected"], true]
           });
         }
       } catch (error) {
@@ -328,6 +376,7 @@ export function setupGeographyRadioListener(map) {
   // Set up event listener for changes to the geography selection
   geographySelect.addEventListener("sl-change", (event) => {
     const selectedGeography = event.target.value;
+    console.log("Selected geography:", selectedGeography);
 
     if (selectedGeography === "Statewide") {
       geoDropdownSelect.disabled = true;
@@ -342,7 +391,7 @@ export function setupGeographyRadioListener(map) {
 
   // Add event listener for changes to the dropdown selection
   geoDropdownSelect.addEventListener("sl-change", (event) => {
-    // Get the current geography type
+    // Get the current geography level (district, county, city, statewide)
     const currentGeography = geographySelect.value;
 
     // Update the boundary layer when dropdown selection changes
@@ -364,7 +413,7 @@ function updateJurisdictionDropdown(selectedGeography, geoDropdownSelect) {
       geoDropdownSelect.label = "By Congressional District:";
       break;
     case "Statewide":
-      geoDropdownSelect.label = "Statewide";
+      geoDropdownSelect.label = "Statewide (no filter)";
   }
 
   // Clear existing options
@@ -515,7 +564,7 @@ function updateJurisdictionDropdown(selectedGeography, geoDropdownSelect) {
       geoDropdownSelect.value = counties[12].value; // Fulton
     }
   } else if (selectedGeography === "District") {
-    // Create options for districts 1-14
+    // Create dropdown menu options for districts 1-14
     for (let i = 1; i <= 14; i++) {
       const option = document.createElement("sl-option");
       option.value = i.toString();

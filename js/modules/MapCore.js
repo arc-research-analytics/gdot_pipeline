@@ -2,6 +2,9 @@
 mapboxgl.accessToken =
   "pk.eyJ1Ijoid3dyaWdodDIxIiwiYSI6ImNtN2MwdjdtYjBqeTUycnBwbHI1cWJrZmIifQ.BztD8jx6SLKxOtjK1ae4kg";
 
+// Import ProjectLoader
+import { setupProjectLoaderListener } from './ProjectLoader.js';
+
 // Base URL for relative paths (same approach as in other modules)
 const BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
   ? '../..'  // Local development
@@ -97,6 +100,11 @@ export function initializeMap() {
         lastUpdatedElement.textContent = "Date not available";
       }
     });
+
+  // Setup project loader to add project layers to the map
+  mapInstance.on('load', () => {
+    setupProjectLoaderListener(mapInstance);
+  });
 
   // Theme management will be handled by ThemeManager.js
 

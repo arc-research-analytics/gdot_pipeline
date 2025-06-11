@@ -1,4 +1,4 @@
-// Maps geography types to their corresponding project geojson files
+// Maps geography types to their corresponding project GeoJSON files.
 // Using a base URL approach to handle both local and GitHub Pages deployments
 const BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
     ? '../..'  // Local development
@@ -6,13 +6,35 @@ const BASE_URL = window.location.hostname === 'localhost' || window.location.hos
 
 const PROJECT_FILE_PATHS = {
     Statewide: `${BASE_URL}/data/projects/statewide_projects.geojson`,
+    District: `${BASE_URL}/data/projects/district_projects.geojson`,
     County: `${BASE_URL}/data/projects/county_projects.geojson`,
     City: `${BASE_URL}/data/projects/city_projects.geojson`,
-    District: `${BASE_URL}/data/projects/district_projects.geojson`,
 };
 
-// Loads project GeoJSON data based on the selected geography type
-async function loadProjectGeoJSON(geographyType) {
+// Map HTML select option values to GeoJSON status values
+export const STATUS_MAPPING = {
+    "Pre_Construction": "PRE-CONSTRUCTION",
+    "Under_Construction": "UNDER-CONSTRUCTION",
+    "Completed_Construction": "COMPLETED-CONSTRUCTION",
+    "All": null // null indicates no filter should be applied
+};
+
+// Define colors for each status
+export const STATUS_COLORS = {
+    "PRE-CONSTRUCTION": "#3498db", // Blue
+    "UNDER-CONSTRUCTION": "#f39c12", // Orange
+    "COMPLETED-CONSTRUCTION": "#27ae60" // Green
+};
+
+// Import the map legend module
+import { initLegend, updateLegend } from './MapLegend.js';
+
+/**
+ * Loads project GeoJSON data based on the selected geography type.
+ * @param {string} geographyType - The selected geography type (Statewide, District, County, or City).
+ * @returns {Promise<Object>} - A Promise resolving to the GeoJSON data.
+ */
+export async function loadProjectGeoJSON(geographyType) {
     const filePath = PROJECT_FILE_PATHS[geographyType];
 
     if (!filePath) {
@@ -20,270 +42,207 @@ async function loadProjectGeoJSON(geographyType) {
     }
 
     try {
-        console.log(`Fetching project data from: ${filePath}`);
         const response = await fetch(filePath);
-
         if (!response.ok) {
-            throw new Error(`Failed to fetch project geojson: ${response.statusText}`);
+            throw new Error(`Failed to fetch project GeoJSON: ${response.statusText}`);
         }
-
-        return await response.json();
+        const data = await response.json();
+        return data;
     } catch (error) {
-        console.error(`Error loading project geojson for ${geographyType}:`, error);
+        console.error(`Error loading project GeoJSON for ${geographyType}:`, error);
         throw error;
     }
 }
 
-// Helper function to check if a project matches the selected jurisdiction
-function isProjectInJurisdiction(feature, selectedJurisdiction, geographyType) {
-    if (!feature.properties) {
-        return false;
+/**
+ * Filters GeoJSON data based on the selected status
+ * @param {Object} data - The GeoJSON data to filter
+ * @param {string} status - The selected status filter value
+ * @returns {Object} - Filtered GeoJSON data
+ */
+function filterProjectsByStatus(data, status) {
+    // If status is "All" (maps to null), return all data
+    if (!STATUS_MAPPING[status]) {
+        return data;
     }
 
-    // For statewide, include all projects regardless of jurisdiction
-    if (geographyType === "Statewide") {
-        return true;
-    }
+    // Create a deep copy of the GeoJSON to avoid modifying the original
+    const filteredData = JSON.parse(JSON.stringify(data));
 
-    // For District, County, and City, filter by the jurisdiction_id field
-    switch (geographyType) {
-        case "District":
-            // Convert to number for comparison since district is typically stored as a number
-            const districtNumber = parseInt(selectedJurisdiction, 10);
-            return feature.properties.jurisdiction_id === districtNumber;
+    // Filter features based on status
+    filteredData.features = filteredData.features.filter(feature =>
+        feature.properties && feature.properties.Status === STATUS_MAPPING[status]
+    );
 
-        case "County":
-            // Handle spaces from underscore conversion if needed
-            const countyName = selectedJurisdiction.replace(/_/g, ' ');
-            return feature.properties.jurisdiction === countyName ||
-                feature.properties.jurisdiction === selectedJurisdiction;
-
-        case "City":
-            // Handle spaces from underscore conversion if needed
-            const cityName = selectedJurisdiction.replace(/_/g, ' ');
-            return feature.properties.jurisdiction === cityName ||
-                feature.properties.jurisdiction === selectedJurisdiction;
-
-        default:
-            return false;
-    }
+    return filteredData;
 }
 
-// Helper function to check if a project matches the selected status
-function isProjectMatchingStatus(feature, selectedStatus) {
-    if (!feature.properties || !feature.properties.Status) {
-        return false;
-    }
-
-    // If ALL is selected, include all projects
-    if (selectedStatus === "ALL") {
-        return true;
-    }
-
-    // Otherwise, match the exact status
-    return feature.properties.Status === selectedStatus;
-}
-
-// Updates the map with project layers based on the selected geography
-export async function updateProjectLayers(map, geographyType) {
+/**
+ * Adds project data to the map as a line layer
+ * @param {Object} map - The Mapbox GL JS map instance
+ * @param {Object} projectData - The GeoJSON project data
+ * @param {string} geographyType - The geography type
+ * @param {string} statusFilter - The selected status filter
+ */
+export function addProjectsToMap(map, projectData, geographyType, statusFilter = "All") {
     const sourceId = "projects-source";
     const layerId = "projects-layer";
-    const labelLayerId = "boundary-labels"; // The ID of the label layer from GeoBoundaryLoader.js
 
-    console.log(`Loading projects for ${geographyType}`);
+    // Remove existing layers and source if they exist
+    if (map.getLayer(layerId)) {
+        map.removeLayer(layerId);
+    }
+    if (map.getSource(sourceId)) {
+        map.removeSource(sourceId);
+    }
 
-    try {
-        // Load the project GeoJSON data for the selected geography type
-        let projectData = await loadProjectGeoJSON(geographyType);
+    // Filter data based on status if needed
+    const filteredData = filterProjectsByStatus(projectData, statusFilter);
 
-        // Get the current jurisdiction selection
-        const geoDropdownSelect = document.getElementById("geoDropdownSelect");
-        let selectedJurisdiction = null;
-        if (geoDropdownSelect) {
-            selectedJurisdiction = geoDropdownSelect.value;
-            console.log(`Selected jurisdiction for ${geographyType}:`, selectedJurisdiction);
+    // Add the GeoJSON as a source
+    map.addSource(sourceId, {
+        type: "geojson",
+        data: filteredData
+    });
+
+    // Look for existing label layers to place projects below them
+    const labelLayerId = "boundary-labels";
+    const unselectedLabelLayerId = "boundary-labels-unselected";
+    let beforeLayerId = null;
+
+    // If we're loading District geography, check if labels exist
+    // and add projects below the bottom-most label layer
+    if (geographyType === "District") {
+        // Check for both label layers and choose the bottom one to place projects below
+        if (map.getLayer(unselectedLabelLayerId)) {
+            beforeLayerId = unselectedLabelLayerId;
+        } else if (map.getLayer(labelLayerId)) {
+            beforeLayerId = labelLayerId;
         }
+    }
 
-        // Get the current status selection
-        const statusSelect = document.getElementById("statusSelect");
-        let selectedStatus = "ALL";
-        if (statusSelect) {
-            selectedStatus = statusSelect.value;
-            console.log(`Selected status: ${selectedStatus}`);
-        }
-
-        // Apply both filters - first jurisdiction, then status
-        if (projectData.features && projectData.features.length > 0) {
-            const originalCount = projectData.features.length;
-
-            // Apply jurisdiction filter (except for Statewide)
-            if (geographyType !== "Statewide" && selectedJurisdiction) {
-                projectData.features = projectData.features.filter(feature =>
-                    isProjectInJurisdiction(feature, selectedJurisdiction, geographyType)
-                );
-                console.log(`Filtered by jurisdiction from ${originalCount} to ${projectData.features.length} projects`);
-            }
-
-            // Apply status filter
-            const afterJurisdictionCount = projectData.features.length;
-            projectData.features = projectData.features.filter(feature =>
-                isProjectMatchingStatus(feature, selectedStatus)
-            );
-            console.log(`Filtered by status from ${afterJurisdictionCount} to ${projectData.features.length} projects`);
-        }
-
-        // Wait for the map to be loaded
-        if (!map.loaded()) {
-            await new Promise((resolve) => map.once("load", resolve));
-        }
-
-        // Remove existing project layers and source if they exist
-        if (map.getLayer(layerId)) {
-            map.removeLayer(layerId);
-        }
-
-        if (map.getSource(sourceId)) {
-            map.removeSource(sourceId);
-        }
-
-        // Check if we have any features left after filtering
-        if (!projectData.features || projectData.features.length === 0) {
-            console.warn(`No projects found after filtering`);
-            return;
-        }
-
-        // Add the projects as a new source
-        map.addSource(sourceId, {
-            type: "geojson",
-            data: projectData,
-        });
-
-        // Add the project layer with styling based on status
+    // Add the layer with appropriate styling for lines
+    // If beforeLayerId is set, add the layer below that layer
+    if (beforeLayerId) {
         map.addLayer({
             id: layerId,
             type: "line",
             source: sourceId,
+            layout: {
+                "line-join": "round",
+                "line-cap": "round"
+            },
             paint: {
-                // Line color based on project status
+                // Color lines based on status
                 "line-color": [
                     "match",
                     ["get", "Status"],
-                    "PRE-CONSTRUCTION", "#F39C12",
-                    "UNDER-CONSTRUCTION", "#2ECC71",
-                    "COMPLETED-CONSTRUCTION", "#2980B9",
-                    "#000000" // default color
+                    "PRE-CONSTRUCTION", STATUS_COLORS["PRE-CONSTRUCTION"],
+                    "UNDER-CONSTRUCTION", STATUS_COLORS["UNDER-CONSTRUCTION"],
+                    "COMPLETED-CONSTRUCTION", STATUS_COLORS["COMPLETED-CONSTRUCTION"],
+                    "#FF6B6B" // Default color for any other status
                 ],
                 "line-width": 3,
-                "line-opacity": 1.0
+                "line-opacity": 0.8
+            }
+        }, beforeLayerId); // Add below the label layer
+    } else {
+        // Add normally if no label layer found
+        map.addLayer({
+            id: layerId,
+            type: "line",
+            source: sourceId,
+            layout: {
+                "line-join": "round",
+                "line-cap": "round"
+            },
+            paint: {
+                // Color lines based on status
+                "line-color": [
+                    "match",
+                    ["get", "Status"],
+                    "PRE-CONSTRUCTION", STATUS_COLORS["PRE-CONSTRUCTION"],
+                    "UNDER-CONSTRUCTION", STATUS_COLORS["UNDER-CONSTRUCTION"],
+                    "COMPLETED-CONSTRUCTION", STATUS_COLORS["COMPLETED-CONSTRUCTION"],
+                    "#FF6B6B" // Default color for any other status
+                ],
+                "line-width": 3,
+                "line-opacity": 0.8
             }
         });
-
-        // Move the label layer to the top if it exists
-        // This ensures labels are drawn on top of the project lines
-        if (map.getLayer(labelLayerId)) {
-            map.moveLayer(labelLayerId);
-        }
-
-        // Add click event for project popups
-        setupProjectPopups(map, layerId);
-
-        // Update the legend based on the selected status
-        updateLegend(selectedStatus);
-
-        return projectData;
-    } catch (error) {
-        console.error(`Error updating project layers for ${geographyType}:`, error);
-        throw error;
     }
+
+    // Keep the pointer cursor on hover
+    map.on("mouseenter", layerId, () => {
+        map.getCanvas().style.cursor = "pointer";
+    });
+
+    map.on("mouseleave", layerId, () => {
+        map.getCanvas().style.cursor = "";
+    });
+
+    // Update the legend to match the current status filter
+    updateLegend(STATUS_COLORS, statusFilter, STATUS_MAPPING);
 }
 
-// Updates the legend visibility based on selected status
-function updateLegend(selectedStatus) {
-    // Get all legend elements
-    const preConstructionLegend = document.getElementById("legend-pre-construction");
-    const underConstructionLegend = document.getElementById("legend-under-construction");
-    const completedLegend = document.getElementById("legend-construction-complete");
-    const allLegend = document.getElementById("legend-all");
+/**
+ * Sets up an event listener for the geography selection radio buttons.
+ * When the selection changes, it loads the corresponding project GeoJSON.
+ * @param {Object} map - The Mapbox GL JS map instance
+ */
+export function setupProjectLoaderListener(map) {
+    const geographySelect = document.getElementById("geographySelect");
+    const statusSelect = document.getElementById("statusSelect");
 
-    // Hide all legends first
-    preConstructionLegend.style.display = "none";
-    underConstructionLegend.style.display = "none";
-    completedLegend.style.display = "none";
-    allLegend.style.display = "none";
-
-    // Show the appropriate legend based on the selected status
-    switch (selectedStatus) {
-        case "PRE-CONSTRUCTION":
-            preConstructionLegend.style.display = "block";
-            break;
-        case "UNDER-CONSTRUCTION":
-            underConstructionLegend.style.display = "block";
-            break;
-        case "COMPLETED-CONSTRUCTION":
-            completedLegend.style.display = "block";
-            break;
-        case "ALL":
-            allLegend.style.display = "block";
-            break;
+    if (!geographySelect) {
+        console.error("Geography select element not found");
+        return;
     }
-}
 
-// Sets up popups for project features
-function setupProjectPopups(map, layerId) {
-    // First remove any existing click handlers to prevent duplicates
-    map.off('click', layerId);
-    map.off('mouseenter', layerId);
-    map.off('mouseleave', layerId);
+    if (!statusSelect) {
+        console.error("Status select element not found");
+        return;
+    }
 
-    // Create a popup but don't add it to the map yet
-    const popup = new mapboxgl.Popup({
-        closeButton: true,
-        closeOnClick: true
+    // Initialize the legend
+    initLegend(map, STATUS_COLORS, STATUS_MAPPING);
+
+    // Wait for the map to be fully loaded
+    if (!map.loaded()) {
+        map.on("load", () => {
+            loadInitialProjects();
+        });
+    } else {
+        loadInitialProjects();
+    }
+
+    function loadInitialProjects() {
+        // Load projects for the initial selection
+        const initialGeography = geographySelect.value || "District";
+        const initialStatus = statusSelect.value || "All";
+
+        loadProjectGeoJSON(initialGeography)
+            .then(data => addProjectsToMap(map, data, initialGeography, initialStatus))
+            .catch(console.error);
+    }
+
+    // Set up event listener for changes to the geography selection
+    geographySelect.addEventListener("sl-change", (event) => {
+        const selectedGeography = event.target.value;
+        const selectedStatus = statusSelect.value;
+
+        loadProjectGeoJSON(selectedGeography)
+            .then(data => addProjectsToMap(map, data, selectedGeography, selectedStatus))
+            .catch(console.error);
     });
 
-    // Add click event to show popup with project details
-    map.on('click', layerId, (e) => {
-        // Change the cursor style as a UI indicator
-        map.getCanvas().style.cursor = 'pointer';
+    // Set up event listener for changes to the status selection
+    statusSelect.addEventListener("sl-change", (event) => {
+        const selectedGeography = geographySelect.value;
+        const selectedStatus = event.target.value;
 
-        // Get the feature at the clicked point
-        const feature = e.features[0];
-        const props = feature.properties;
-
-        // Format the popup content
-        const content = `
-      <h3>${props.ProjectName || 'Unnamed Project'}</h3>
-      <p><strong>ID:</strong> ${props.ProjectID || 'N/A'}</p>
-      <p><strong>Status:</strong> ${props.Status || 'N/A'}</p>
-      <p><strong>Cost:</strong> $${formatCurrency(props.Cost) || 'N/A'}</p>
-      <p><strong>Description:</strong> ${props.Description || 'No description available'}</p>
-    `;
-
-        // Set the popup coordinates and content
-        popup
-            .setLngLat(e.lngLat)
-            .setHTML(content)
-            .addTo(map);
-    });
-
-    // Change cursor to pointer when hovering over a project
-    map.on('mouseenter', layerId, () => {
-        map.getCanvas().style.cursor = 'pointer';
-    });
-
-    // Change cursor back when leaving a project
-    map.on('mouseleave', layerId, () => {
-        map.getCanvas().style.cursor = '';
+        loadProjectGeoJSON(selectedGeography)
+            .then(data => addProjectsToMap(map, data, selectedGeography, selectedStatus))
+            .catch(console.error);
     });
 }
-
-// Helper function to format currency numbers
-function formatCurrency(value) {
-    if (!value) return '0';
-
-    // Convert to number if it's a string
-    const numValue = typeof value === 'string' ? parseFloat(value.replace(/[^0-9.-]+/g, '')) : value;
-
-    // Format with commas for thousands
-    return numValue.toLocaleString('en-US');
-} 

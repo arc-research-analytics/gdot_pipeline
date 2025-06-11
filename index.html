@@ -46,6 +46,9 @@
   <!-- holds the text box showing the last updated date -->
   <div id="last-updated"></div>
 
+  <!-- map legend container -->
+  <div id="map-legend" class="map-legend"></div>
+
   <!-- header -->
   <header>
     GDOT Projects Map
@@ -68,7 +71,7 @@
     </div>
 
     <div style="text-align: center; margin-top: 30px; margin-bottom: -10px;">
-      <h3>Map Filters</h3>
+      <h3>Filter GDOT Projects</h3>
     </div>
 
     <sl-select id="geoDropdownSelect" label="By Congressional District:" value=4>
@@ -88,27 +91,13 @@
       <sl-option value=14>14</sl-option>
     </sl-select>
 
-    <!-- vertical spacing -->
     <br />
-
-    <!-- dropdown for map layers -->
-    <sl-select id="statusSelect" label="By Construction Status:" value="PRE-CONSTRUCTION">
-      <sl-option value="ALL">All</sl-option>
-      <sl-option value="PRE-CONSTRUCTION">Pre-Construction</sl-option>
-      <sl-option value="UNDER-CONSTRUCTION">Under Construction</sl-option>
-      <sl-option value="COMPLETED-CONSTRUCTION">Completed</sl-option>
+    <sl-select id="statusSelect" label="Project Status:" value="All">
+      <sl-option value="All">All</sl-option>
+      <sl-option value="Pre_Construction">Pre Construction</sl-option>
+      <sl-option value="Under_Construction">Under Construction</sl-option>
+      <sl-option value="Completed_Construction">Completed</sl-option>
     </sl-select>
-
-    <!-- Display summary stats inside the drawer -->
-    <div style="text-align: center; margin-top: 30px; margin-bottom: -10px;">
-      <h3>Filtered Project Metrics</h3>
-    </div>
-    <div slot="header" style="text-align: center; margin-left: 6px; font-size: 18px; font-weight: 800;">
-      Filtered Project Summary
-    </div>
-    <p style="line-height: 8px;"><strong>Total Projects:</strong> <span id="total-projects">$0</span></p>
-    <p style="line-height: 8px;"><strong>Total Cost:</strong> <span id="total-cost">$0</span></p>
-    <p style="line-height: 8px;"><strong>Average Cost:</strong> <span id="average-cost">$0</span></p>
 
     <!-- Checkboxes for additional geographic boundaries -->
     <div style="text-align: center; margin-top: 30px; margin-bottom: -10px;">
@@ -157,34 +146,6 @@
         </sl-radio-button>
       </sl-tooltip>
     </sl-radio-group>
-  </div>
-
-
-  <!-- map legend -->
-  <div id="legend-pre-construction" class="legend">
-    <span class="legend-color" style="background-color: #F39C12"></span>
-    <span>Pre-Construction Projects</span>
-  </div>
-
-  <div id="legend-under-construction" class="legend">
-    <span class="legend-color" style="background-color: #2ECC71"></span>
-    <span>Under Construction Projects</span>
-  </div>
-
-  <div id="legend-construction-complete" class="legend">
-    <span class="legend-color" style="background-color: #2980B9"></span>
-    <span>Completed Projects</span>
-  </div>
-
-  <div id="legend-all" class="legend">
-    <span class="legend-color" style="background-color: #F39C12"></span>
-    <span>Pre-Construction Projects</span>
-    <br>
-    <span class="legend-color" style="background-color: #2ECC71"></span>
-    <span>Under Construction Projects</span>
-    <br>
-    <span class="legend-color" style="background-color: #2980B9"></span>
-    <span>Completed Projects</span>
   </div>
 
   <!-- logos -->

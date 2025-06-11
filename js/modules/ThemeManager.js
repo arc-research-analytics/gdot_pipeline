@@ -10,13 +10,33 @@ const THEMES = {
 const THEME_STYLES = {
     [THEMES.LIGHT]: {
         basemapUrl: 'https://a.basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}{r}.png',
-        boundaryColor: '#000000',
-        textColor: '#000000'
+        unselectedBoundaryColor: '#737373',
+        selectedBoundaryColor: '#000000',
+        unselectedLineWidth: 0.5,
+        selectedLineWidth: 2,
+        textColor: '#000000',
+        // Label styles
+        selectedLabelColor: '#000000',
+        unselectedLabelColor: '#757575',
+        selectedLabelHaloColor: '#ffffff',
+        unselectedLabelHaloColor: '#ffffff',
+        selectedLabelHaloWidth: 2,
+        unselectedLabelHaloWidth: 0.5
     },
     [THEMES.DARK]: {
         basemapUrl: 'https://a.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png',
-        boundaryColor: '#ffffff',
-        textColor: '#ffffff'
+        unselectedBoundaryColor: '#5a5a5a',
+        selectedBoundaryColor: '#ffffff',
+        unselectedLineWidth: 0.5,
+        selectedLineWidth: 2,
+        textColor: '#ffffff',
+        // Label styles
+        selectedLabelColor: '#ffffff',
+        unselectedLabelColor: '#a0a0a0',
+        selectedLabelHaloColor: '#000000',
+        unselectedLabelHaloColor: '#262626',
+        selectedLabelHaloWidth: 2,
+        unselectedLabelHaloWidth: 0.5
     }
 };
 
@@ -93,41 +113,117 @@ function updateBasemap(map, theme) {
  * @param {Object} map - The Mapbox GL map instance
  */
 function updateBoundaryColors(map) {
-    // List of all boundary layers that need color updates
-    const boundaryLayers = [
-        'selected-boundary-outline',
-        'unselected-boundary-outline'
-    ];
+    const themeStyle = THEME_STYLES[currentTheme];
 
-    const boundaryColor = THEME_STYLES[currentTheme].boundaryColor;
+    // Update selected boundary outline
+    if (map.getLayer('selected-boundary-outline')) {
+        map.setPaintProperty(
+            'selected-boundary-outline',
+            'line-color',
+            themeStyle.selectedBoundaryColor
+        );
+        map.setPaintProperty(
+            'selected-boundary-outline',
+            'line-width',
+            themeStyle.selectedLineWidth
+        );
+    }
 
-    // Update each boundary layer if it exists
-    boundaryLayers.forEach(layerId => {
-        if (map.getLayer(layerId)) {
-            map.setPaintProperty(
-                layerId,
-                'line-color',
-                boundaryColor
-            );
+    // Update unselected boundary outline
+    if (map.getLayer('unselected-boundary-outline')) {
+        map.setPaintProperty(
+            'unselected-boundary-outline',
+            'line-color',
+            themeStyle.unselectedBoundaryColor
+        );
+        map.setPaintProperty(
+            'unselected-boundary-outline',
+            'line-width',
+            themeStyle.unselectedLineWidth
+        );
+    }
+
+    // Make sure fills are transparent
+    if (map.getLayer('selected-boundary')) {
+        map.setPaintProperty(
+            'selected-boundary',
+            'fill-opacity',
+            0
+        );
+    }
+
+    // Update label styles
+    // Selected labels
+    if (map.getLayer('boundary-labels')) {
+        map.setPaintProperty(
+            'boundary-labels',
+            'text-color',
+            themeStyle.selectedLabelColor
+        );
+        map.setPaintProperty(
+            'boundary-labels',
+            'text-halo-color',
+            themeStyle.selectedLabelHaloColor
+        );
+        map.setPaintProperty(
+            'boundary-labels',
+            'text-halo-width',
+            themeStyle.selectedLabelHaloWidth
+        );
+    }
+
+    // Unselected labels
+    if (map.getLayer('boundary-labels-unselected')) {
+        map.setPaintProperty(
+            'boundary-labels-unselected',
+            'text-color',
+            themeStyle.unselectedLabelColor
+        );
+        map.setPaintProperty(
+            'boundary-labels-unselected',
+            'text-halo-color',
+            themeStyle.unselectedLabelHaloColor
+        );
+        map.setPaintProperty(
+            'boundary-labels-unselected',
+            'text-halo-width',
+            themeStyle.unselectedLabelHaloWidth
+        );
+    }
+
+    // Force label source refresh if it exists
+    if (map.getSource('label-source')) {
+        try {
+            const data = map.getSource('label-source')._data;
+            setTimeout(() => {
+                map.getSource('label-source').setData(data);
+            }, 50);
+        } catch (error) {
+            console.warn('Could not refresh label source:', error);
         }
-    });
-
+    }
 }
 
 /**
- * Returns the appropriate boundary style based on the current theme
+ * Returns the appropriate boundary style based on the current theme and selection state
  * @param {string} geographyType - The type of geography (Statewide, County, etc.)
+ * @param {boolean} isSelected - Whether this is for the selected area
  * @returns {Object} - The boundary style object
  */
-export function getBoundaryStyle(geographyType) {
-    // Get current theme's boundary color
-    const boundaryColor = THEME_STYLES[currentTheme].boundaryColor;
+export function getBoundaryStyle(geographyType, isSelected = false) {
+    const themeStyle = THEME_STYLES[currentTheme];
 
-    return {
-        "line-color": boundaryColor,
-        "line-width": 1,
-        // Add any other style properties specific to the geography type if needed
-    };
+    if (isSelected) {
+        return {
+            "line-color": themeStyle.selectedBoundaryColor,
+            "line-width": themeStyle.selectedLineWidth,
+        };
+    } else {
+        return {
+            "line-color": themeStyle.unselectedBoundaryColor,
+            "line-width": themeStyle.unselectedLineWidth,
+        };
+    }
 }
 
 /**
@@ -149,4 +245,27 @@ function updateTextColors(theme) {
  */
 export function getCurrentTheme() {
     return currentTheme;
+}
+
+/**
+ * Returns the appropriate label style based on the current theme and selection state
+ * @param {boolean} isSelected - Whether this is for the selected area
+ * @returns {Object} - The label style object
+ */
+export function getLabelStyle(isSelected = false) {
+    const themeStyle = THEME_STYLES[currentTheme];
+
+    if (isSelected) {
+        return {
+            "text-color": themeStyle.selectedLabelColor,
+            "text-halo-color": themeStyle.selectedLabelHaloColor,
+            "text-halo-width": themeStyle.selectedLabelHaloWidth
+        };
+    } else {
+        return {
+            "text-color": themeStyle.unselectedLabelColor,
+            "text-halo-color": themeStyle.unselectedLabelHaloColor,
+            "text-halo-width": themeStyle.unselectedLabelHaloWidth
+        };
+    }
 }

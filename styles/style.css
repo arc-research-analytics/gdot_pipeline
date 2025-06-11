@@ -331,6 +331,42 @@ sl-button.openDrawer::part(base):hover {
   background-color: none;
 }
 
+.map-legend {
+  position: absolute;
+  bottom: 95px;
+  right: 15px;
+  background-color: #fff;
+  padding: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  z-index: 1;
+  font-size: 14px;
+  line-height: 1.5;
+  max-width: 250px;
+  opacity: 0.9;
+}
+
+.map-legend h4 {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 5px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.legend-key {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  margin-right: 8px;
+  border-radius: 3px;
+}
+
 @media screen and (max-width: 768px) {
 
   /* reposition Filter button to be centered left-to-right */
